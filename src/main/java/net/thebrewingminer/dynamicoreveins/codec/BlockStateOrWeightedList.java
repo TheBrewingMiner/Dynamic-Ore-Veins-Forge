@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProv
 import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 
 public class BlockStateOrWeightedList {
-    public static final Codec<BlockStateProvider> BLOCK_OR_WEIGHTED_LIST = Codec.either(
+    public static final Codec<BlockStateProvider> CODEC = Codec.either(
             ResourceLocation.CODEC,
             WeightedStateProvider.CODEC
     ).xmap(
