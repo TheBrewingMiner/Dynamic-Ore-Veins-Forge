@@ -16,9 +16,9 @@ public class OreVeinConfig {
     public static final Codec<ResourceKey<Level>> DIMENSION_CODEC = ResourceKey.codec(Registry.DIMENSION_REGISTRY);
     
     public static final Codec<OreVeinConfig> CODEC = RecordCodecBuilder.create(oreVeinConfigInstance -> oreVeinConfigInstance.group(
-            BlockStateOrWeightedList.CODEC.fieldOf("ore").forGetter(config -> config.ore),
-            BlockStateOrWeightedList.CODEC.fieldOf("raw_ore").forGetter(config -> config.raw_ore),
-            BlockStateOrWeightedList.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
+            ResourceKeyOrBlockState.CODEC.fieldOf("ore").forGetter(config -> config.ore),
+            ResourceKeyOrBlockState.CODEC.fieldOf("raw_ore").forGetter(config -> config.raw_ore),
+            ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
             DIMENSION_CODEC.fieldOf("dimension").forGetter(config -> config.dimension)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 

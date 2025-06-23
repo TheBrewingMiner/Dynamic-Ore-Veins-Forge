@@ -10,28 +10,26 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProvider;
-import net.minecraft.world.level.levelgen.feature.stateproviders.WeightedStateProvider;
 
-public class BlockStateOrWeightedList {
+public class ResourceKeyOrBlockState {
     public static final Codec<BlockStateProvider> CODEC = Codec.either(
             ResourceLocation.CODEC,
-            WeightedStateProvider.CODEC
+            BlockStateProvider.CODEC
     ).xmap(
             either -> either.map(
                     location -> BlockStateProvider.simple(
                             Registry.BLOCK.getOrThrow(ResourceKey.create(Registry.BLOCK_REGISTRY, location)).defaultBlockState()
                     ),
-                    weighted -> weighted
+                    provider -> provider
             ),
-            provider -> {
-                if (provider instanceof WeightedStateProvider weighted) {
-                    return Either.right(weighted);
-                } else if (provider instanceof SimpleStateProvider simple) {
-                    Block block = simple.getState(RandomSource.create(), BlockPos.ZERO).getBlock();
+            stateProvider -> {
+                if (stateProvider instanceof SimpleStateProvider simpleProvider) {
+                    Block block = simpleProvider.getState(RandomSource.create(), BlockPos.ZERO).getBlock();
                     ResourceLocation location = Registry.BLOCK.getKey(block);
                     return Either.left(location);
+                } else {
+                    return Either.right(stateProvider);
                 }
-                throw new IllegalArgumentException("Unsupported BlockStateProvider type: " + provider.getClass());
             }
     );
 }
