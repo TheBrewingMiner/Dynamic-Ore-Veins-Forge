@@ -36,6 +36,11 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
     );
 
     @Override
+    public String type(){
+        return "dynamic_veins:density_function";
+    }
+
+    @Override
     public boolean test(IVeinCondition.Context context){
         double value = context.compute(function);
         return (value >= minThreshold && value <= maxThreshold);

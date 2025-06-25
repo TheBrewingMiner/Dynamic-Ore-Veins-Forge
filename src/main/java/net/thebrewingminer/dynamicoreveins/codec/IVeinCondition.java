@@ -8,6 +8,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 public interface IVeinCondition {
     Codec<? extends IVeinCondition> codec();
+    String type();
     boolean test(Context context);
     interface Context {
         BlockPos pos();

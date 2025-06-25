@@ -12,6 +12,11 @@ public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor m
     ).apply(heightRangeConditionInstance, HeightRangeCondition::new));
 
     @Override
+    public String type(){
+        return "minecraft:height_range";
+    }
+
+    @Override
     public boolean test(IVeinCondition.Context context){
         WorldGenerationContext worldGenerationContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor());
         int minY = minInclusive.resolveY(worldGenerationContext);
