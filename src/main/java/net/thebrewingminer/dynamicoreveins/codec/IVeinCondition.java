@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 
-public interface IVeinConditionContext {
-    Codec<? extends IVeinConditionContext> codec();
+public interface IVeinCondition {
+    Codec<? extends IVeinCondition> codec();
     boolean test(Context context);
     interface Context {
         BlockPos pos();
