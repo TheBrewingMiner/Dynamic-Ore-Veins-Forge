@@ -5,9 +5,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record DensityFunctionThreshold(DensityFunction function, double minThreshold, double maxThreshold){
+public record DensityFunctionThreshold(DensityFunction function, double minThreshold, double maxThreshold) implements IVeinCondition{
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
+
+    public DensityFunctionThreshold {
+        if (minThreshold > maxThreshold) {
+            throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
+        }
+        if (function == null) {
+            throw new NullPointerException("Density function should not be null.");
+        }
+    }
 
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(DensityFunctionThreshold::function),
@@ -26,12 +35,14 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
             Either::right
     );
 
-    public DensityFunctionThreshold {
-        if (minThreshold > maxThreshold) {
-            throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
-        }
-        if (function == null) {
-            throw new NullPointerException("Density function should not be null.");
-        }
+    @Override
+    public boolean test(IVeinCondition.Context context){
+        double value = context.compute(function);
+        return (value >= minThreshold && value <= maxThreshold);
+    }
+
+    @Override
+    public Codec<? extends IVeinCondition> codec() {
+        return CODEC;
     }
 }
