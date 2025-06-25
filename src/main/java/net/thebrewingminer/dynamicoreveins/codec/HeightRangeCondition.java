@@ -1,10 +1,9 @@
-package net.thebrewingminer.dynamicoreveins.codec.condition;
+package net.thebrewingminer.dynamicoreveins.codec;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
-import net.thebrewingminer.dynamicoreveins.codec.IVeinCondition;
 
 public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor maxInclusive) implements IVeinCondition {
     public static final Codec<HeightRangeCondition> CODEC = RecordCodecBuilder.create(heightRangeConditionInstance -> heightRangeConditionInstance.group(
