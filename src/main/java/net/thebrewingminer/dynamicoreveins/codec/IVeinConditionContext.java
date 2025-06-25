@@ -1,9 +1,11 @@
 package net.thebrewingminer.dynamicoreveins.codec;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 
-public interface IVeinCondition {
+public interface IVeinConditionContext {
+    Codec<? extends IVeinConditionContext> codec();
     boolean test(Context context);
     interface Context {
         BlockPos pos();
