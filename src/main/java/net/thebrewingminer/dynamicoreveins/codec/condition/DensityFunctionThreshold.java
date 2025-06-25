@@ -1,11 +1,11 @@
-package net.thebrewingminer.dynamicoreveins.codec;
+package net.thebrewingminer.dynamicoreveins.codec.condition;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public record DensityFunctionThreshold(DensityFunction function, double minThreshold, double maxThreshold) implements IVeinCondition{
+public record DensityFunctionThreshold(DensityFunction function, double minThreshold, double maxThreshold) implements IVeinCondition {
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
 
