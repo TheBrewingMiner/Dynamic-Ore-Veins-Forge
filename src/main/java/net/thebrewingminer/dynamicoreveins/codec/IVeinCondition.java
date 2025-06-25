@@ -3,6 +3,7 @@ package net.thebrewingminer.dynamicoreveins.codec;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public interface IVeinCondition {
@@ -11,6 +12,7 @@ public interface IVeinCondition {
     interface Context {
         BlockPos pos();
         LevelHeightAccessor heightAccessor();
+        ChunkGenerator chunkGenerator();
         double compute(DensityFunction function);
     }
 }
