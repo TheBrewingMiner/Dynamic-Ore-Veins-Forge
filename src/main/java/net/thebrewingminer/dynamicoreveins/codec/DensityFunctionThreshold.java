@@ -25,4 +25,13 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
             ),
             Either::right
     );
+
+    public DensityFunctionThreshold {
+        if (minThreshold > maxThreshold) {
+            throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
+        }
+        if (function == null) {
+            throw new NullPointerException("Density function should not be null.");
+        }
+    }
 }
