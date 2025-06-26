@@ -1,4 +1,4 @@
-package net.thebrewingminer.dynamicoreveins.levelgen;
+package net.thebrewingminer.dynamicoreveins.mixin;
 
 public class DynamicOreVeinifier {
     protected DynamicOreVeinifier(){}
