@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.thebrewingminer.dynamicoreveins.codec.condition.AlwaysTrueCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
@@ -18,7 +19,8 @@ public class VeinConditionRegistry{
             "minecraft:height_range", HeightRangeCondition.CODEC,
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
             "dynamic_veins:any_of", AnyConditions.CODEC,
-            "dynamic_veins:all_of", AllConditions.CODEC
+            "dynamic_veins:all_of", AllConditions.CODEC,
+            "dynamic_veins:always_true", AlwaysTrueCondition.CODEC
     );
 
     public static final Codec<IVeinCondition> PREDICATE_CODEC = new Codec<>(){
