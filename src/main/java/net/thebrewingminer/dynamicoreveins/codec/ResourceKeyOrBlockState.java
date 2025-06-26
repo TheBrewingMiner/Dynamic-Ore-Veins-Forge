@@ -3,7 +3,8 @@ package net.thebrewingminer.dynamicoreveins.codec;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -18,14 +19,14 @@ public class ResourceKeyOrBlockState{
     ).xmap(
             either -> either.map(
                     location -> BlockStateProvider.simple(
-                            Registry.BLOCK.getOrThrow(ResourceKey.create(Registry.BLOCK_REGISTRY, location)).defaultBlockState()
+                            BuiltInRegistries.BLOCK.getOrThrow(ResourceKey.create(Registries.BLOCK, location)).defaultBlockState()
                     ),
                     provider -> provider
             ),
             stateProvider -> {
                 if (stateProvider instanceof SimpleStateProvider simpleProvider) {
                     Block block = simpleProvider.getState(RandomSource.create(), BlockPos.ZERO).getBlock();
-                    ResourceLocation location = Registry.BLOCK.getKey(block);
+                    ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
                     return Either.left(location);
                 } else {
                     return Either.right(stateProvider);
