@@ -10,18 +10,15 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
 
     public DensityFunctionThreshold{
-        if (minThreshold > maxThreshold) {
+        if (minThreshold > maxThreshold){
             throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
-        }
-        if (function == null) {
-            throw new NullPointerException("Density function should not be null.");
         }
     }
 
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(DensityFunctionThreshold::function),
-            Codec.DOUBLE.fieldOf("min_threshold").forGetter(DensityFunctionThreshold::minThreshold),
-            Codec.DOUBLE.fieldOf("max_threshold").forGetter(DensityFunctionThreshold::maxThreshold)
+            Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.MIN_VALUE).forGetter(DensityFunctionThreshold::minThreshold),
+            Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.MAX_VALUE).forGetter(DensityFunctionThreshold::maxThreshold)
     ).apply(instance, DensityFunctionThreshold::new));
 
     public static final Codec<DensityFunctionThreshold> CODEC = Codec.either(
