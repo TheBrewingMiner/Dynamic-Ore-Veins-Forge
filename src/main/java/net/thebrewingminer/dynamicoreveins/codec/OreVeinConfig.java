@@ -26,7 +26,7 @@ public class OreVeinConfig{
     public static final Codec<OreVeinConfig> CODEC = RecordCodecBuilder.create(oreVeinConfigInstance -> oreVeinConfigInstance.group(
             ResourceKeyOrBlockState.CODEC.fieldOf("ore").forGetter(config -> config.ore),
             ResourceKeyOrBlockState.CODEC.fieldOf("secondary_ore").forGetter(config -> config.secondary_ore),
-            Codec.floatRange(0.0f, 1.0f).fieldOf("secondary_ore_chance").forGetter(config -> config.secondary_ore_chance),
+            Codec.floatRange(0.0f, 1.0f).fieldOf("secondary_ore_chance").orElse(0.02f).forGetter(config -> config.secondary_ore_chance),
             ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
             IsDimension.CODEC.fieldOf("dimension").orElse(Collections.singletonList(Level.OVERWORLD)).forGetter(config -> config.dimension),
             DensityFunctionThreshold.CODEC.fieldOf("vein_toggle").orElse(null).forGetter(config -> config.veinToggle),
