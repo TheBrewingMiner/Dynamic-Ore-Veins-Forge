@@ -18,8 +18,8 @@ public class DynamicOreVeins{
     public static final String MOD_ID = "dynamic_ore_veins";
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public DynamicOreVeins(FMLJavaModLoadingContext context){
-        IEventBus modEventBus = context.getModEventBus();
+    public DynamicOreVeins(){
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         MinecraftForge.EVENT_BUS.register(this);
     }
 
