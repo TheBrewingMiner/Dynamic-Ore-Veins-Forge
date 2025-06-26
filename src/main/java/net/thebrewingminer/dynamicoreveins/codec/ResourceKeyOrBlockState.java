@@ -12,25 +12,25 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProvider;
 
-public class ResourceKeyOrBlockState{
+public class ResourceKeyOrBlockState {
     public static final Codec<BlockStateProvider> CODEC = Codec.either(
             ResourceLocation.CODEC,
             BlockStateProvider.CODEC
     ).xmap(
-            either -> either.map(
-                    location -> BlockStateProvider.simple(
-                            BuiltInRegistries.BLOCK.getOrThrow(ResourceKey.create(Registries.BLOCK, location)).defaultBlockState()
-                    ),
-                    provider -> provider
-            ),
-            stateProvider -> {
-                if (stateProvider instanceof SimpleStateProvider simpleProvider) {
-                    Block block = simpleProvider.getState(RandomSource.create(), BlockPos.ZERO).getBlock();
-                    ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
-                    return Either.left(location);
-                } else {
-                    return Either.right(stateProvider);
-                }
+        either -> either.map(
+                location -> BlockStateProvider.simple(
+                        BuiltInRegistries.BLOCK.getOrThrow(ResourceKey.create(Registries.BLOCK, location)).defaultBlockState()
+                ),
+                provider -> provider
+        ),
+        stateProvider -> {
+            if (stateProvider instanceof SimpleStateProvider simpleProvider) {
+                Block block = simpleProvider.getState(RandomSource.create(), BlockPos.ZERO).getBlock();
+                ResourceLocation location = BuiltInRegistries.BLOCK.getKey(block);
+                return Either.left(location);
+            } else {
+                return Either.right(stateProvider);
             }
+        }
     );
 }

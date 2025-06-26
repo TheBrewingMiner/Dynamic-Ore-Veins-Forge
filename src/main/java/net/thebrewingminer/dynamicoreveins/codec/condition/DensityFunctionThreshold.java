@@ -9,7 +9,7 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
 
-    public DensityFunctionThreshold{
+    public DensityFunctionThreshold {
         if (minThreshold > maxThreshold){
             throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
         }

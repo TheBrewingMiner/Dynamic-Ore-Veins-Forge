@@ -5,7 +5,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 
 import java.util.List;
 
-public class AllConditions extends CombiningCondition{
+public class AllConditions extends CombiningCondition {
     public static final Codec<AllConditions> CODEC = CombiningCondition.codec(AllConditions::new);
 
     public AllConditions(List<IVeinCondition> conditions){

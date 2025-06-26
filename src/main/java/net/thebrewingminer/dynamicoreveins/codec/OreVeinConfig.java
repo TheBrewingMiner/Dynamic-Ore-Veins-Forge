@@ -14,7 +14,7 @@ import net.thebrewingminer.dynamicoreveins.registry.VeinConditionRegistry;
 import java.util.Collections;
 import java.util.List;
 
-public class OreVeinConfig{
+public class OreVeinConfig {
     public final BlockStateProvider ore;
     public final BlockStateProvider secondary_ore;
     public final float secondary_ore_chance;

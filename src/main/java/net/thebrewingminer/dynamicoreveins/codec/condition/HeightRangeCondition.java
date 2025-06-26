@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 
-public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor maxInclusive) implements IVeinCondition{
+public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor maxInclusive) implements IVeinCondition {
     public static final Codec<HeightRangeCondition> CODEC = RecordCodecBuilder.create(heightRangeConditionInstance -> heightRangeConditionInstance.group(
             VerticalAnchor.CODEC.fieldOf("min_inclusive").forGetter(HeightRangeCondition::minInclusive),
             VerticalAnchor.CODEC.fieldOf("max_inclusive").forGetter(HeightRangeCondition::maxInclusive)

@@ -14,7 +14,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 @Mod(DynamicOreVeins.MOD_ID)
-public class DynamicOreVeins{
+public class DynamicOreVeins {
     public static final String MOD_ID = "dynamic_ore_veins";
     private static final Logger LOGGER = LogUtils.getLogger();
 

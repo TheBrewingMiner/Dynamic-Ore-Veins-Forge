@@ -14,7 +14,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AnyConditio
 
 import java.util.Map;
 
-public class VeinConditionRegistry{
+public class VeinConditionRegistry {
     public static final Map<String, Codec<? extends IVeinCondition>> REGISTRY = Map.of(
             "minecraft:height_range", HeightRangeCondition.CODEC,
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,

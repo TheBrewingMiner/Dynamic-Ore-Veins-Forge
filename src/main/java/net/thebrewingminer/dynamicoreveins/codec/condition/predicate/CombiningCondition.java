@@ -8,7 +8,7 @@ import net.thebrewingminer.dynamicoreveins.registry.VeinConditionRegistry;
 import java.util.List;
 import java.util.function.Function;
 
-public abstract class CombiningCondition implements IVeinCondition{
+public abstract class CombiningCondition implements IVeinCondition {
     protected final List<IVeinCondition> conditions;
 
     protected CombiningCondition(List<IVeinCondition> conditions){

@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level;
 import java.util.Collections;
 import java.util.List;
 
-public class IsDimension{
+public class IsDimension {
     public static final Codec<List<ResourceKey<Level>>> CODEC = Codec.either(
             ResourceKey.codec(Registries.DIMENSION),
             ResourceKey.codec(Registries.DIMENSION).listOf()
