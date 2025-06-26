@@ -11,6 +11,6 @@ import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistry;
 public class ModRegistryEvents {
     @SubscribeEvent
     public static void onRegisterDataPackRegistry(DataPackRegistryEvent.NewRegistry event) {
-        event.dataPackRegistry(OreVeinRegistry.ModRegistries.ORE_VEIN_REGISTRY_KEY, OreVeinConfig.CODEC);
+        event.dataPackRegistry(OreVeinRegistry.ORE_VEIN_REGISTRY_KEY, OreVeinConfig.CODEC);
     }
 }
