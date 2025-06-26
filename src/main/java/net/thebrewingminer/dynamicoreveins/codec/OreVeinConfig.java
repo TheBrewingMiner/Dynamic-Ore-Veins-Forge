@@ -30,7 +30,7 @@ public class OreVeinConfig{
             ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
             IsDimension.CODEC.fieldOf("dimension").orElse(Collections.singletonList(Level.OVERWORLD)).forGetter(config -> config.dimension),
             DensityFunctionThreshold.CODEC.fieldOf("vein_toggle").orElse(null).forGetter(config -> config.veinToggle),
-            VeinConditionRegistry.CODEC.optionalFieldOf("conditions", new AlwaysTrueCondition()).forGetter(config -> config.conditions)
+            VeinConditionRegistry.codec().optionalFieldOf("conditions", new AlwaysTrueCondition()).forGetter(config -> config.conditions)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 
     public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension, DensityFunctionThreshold veinToggle, IVeinCondition conditions){

@@ -23,61 +23,73 @@ public class VeinConditionRegistry{
             "dynamic_veins:always_true", AlwaysTrueCondition.CODEC
     );
 
-    public static final Codec<IVeinCondition> PREDICATE_CODEC = new Codec<>(){
-        @Override
-        public <T> DataResult<Pair<IVeinCondition, T>> decode(DynamicOps<T> ops, T input) {
-            return ops.getMap(input).flatMap(map -> {
-                T typeKey = ops.createString("type");
-                T typeElement = map.get(typeKey);
+    private VeinConditionRegistry(){}
 
-                if (typeElement == null) {
-                    return DataResult.error("Missing 'type' field in vein condition");
-                }
+    private static class LazyCodecHolder{
+        private static final Codec<IVeinCondition> PREDICATE_CODEC = new Codec<>() {
+            @Override
+            public <T> DataResult<Pair<IVeinCondition, T>> decode(DynamicOps<T> ops, T input) {
+                return ops.getMap(input).flatMap(map -> {
+                    T typeKey = ops.createString("type");
+                    T typeElement = map.get(typeKey);
 
-                return ops.getStringValue(typeElement).flatMap(typeName -> {
-                    Codec<? extends IVeinCondition> conditionCodec = VeinConditionRegistry.REGISTRY.get(typeName);
-                    if (conditionCodec == null) {
-                        return DataResult.error("Unknown vein condition type: " + typeName);
+                    if (typeElement == null) {
+                        return DataResult.error("Missing 'type' field in vein condition");
                     }
 
-                    return conditionCodec.decode(ops, input).map(pair -> Pair.of(pair.getFirst(), pair.getSecond()));
-                });
-            });
-        }
+                    return ops.getStringValue(typeElement).flatMap(typeName -> {
+                        Codec<? extends IVeinCondition> conditionCodec = VeinConditionRegistry.REGISTRY.get(typeName);
+                        if (conditionCodec == null) {
+                            return DataResult.error("Unknown vein condition type: " + typeName);
+                        }
 
-        @Override
-        public <T> DataResult<T> encode(IVeinCondition input, DynamicOps<T> ops, T prefix){
-            String typeName = input.type();
-            @SuppressWarnings("unchecked")
-            Codec<IVeinCondition> codec = (Codec<IVeinCondition>) VeinConditionRegistry.REGISTRY.get(typeName);
-            if (codec == null) {
-                return DataResult.error("Unknown vein condition type for encoding: " + typeName);
+                        return conditionCodec.decode(ops, input).map(pair -> Pair.of(pair.getFirst(), pair.getSecond()));
+                    });
+                });
             }
 
-            return codec.encode(input, ops, prefix);
-        }
-    };
+            @Override
+            public <T> DataResult<T> encode(IVeinCondition input, DynamicOps<T> ops, T prefix) {
+                String typeName = input.type();
+                @SuppressWarnings("unchecked")
+                Codec<IVeinCondition> codec = (Codec<IVeinCondition>) VeinConditionRegistry.REGISTRY.get(typeName);
+                if (codec == null) {
+                    return DataResult.error("Unknown vein condition type for encoding: " + typeName);
+                }
 
-    public static final Codec<IVeinCondition> CODEC = Codec.either(
-        VeinConditionRegistry.PREDICATE_CODEC,            // Encode single object
-        VeinConditionRegistry.PREDICATE_CODEC.listOf()    // Encode list of conditions
-    ).xmap(
-        either -> either.map(
-            condition -> condition,
-            list -> {
-                if (list.size() == 1){
-                    return list.get(0);
+                return codec.encode(input, ops, prefix);
+            }
+        };
+
+        private static final Codec<IVeinCondition> CODEC = Codec.either(
+                PREDICATE_CODEC,            // Encode single object
+                PREDICATE_CODEC.listOf()    // Encode list of conditions
+        ).xmap(
+            either -> either.map(
+                    condition -> condition,
+                    list -> {
+                        if (list.size() == 1) {
+                            return list.get(0);
+                        } else {
+                            return new AllConditions(list);
+                        }
+                    }
+            ),
+            condition -> {
+                if (condition instanceof AllConditions all) {
+                    return Either.right(all.conditions());
                 } else {
-                    return new AllConditions(list);
+                    return Either.left(condition);
                 }
             }
-        ),
-        condition -> {
-            if (condition instanceof AllConditions all) {
-                return Either.right(all.conditions());
-            } else {
-                return Either.left(condition);
-            }
-        }
-    );
+        );
+    }
+
+    public static Codec<IVeinCondition> predicateCodec() {
+        return LazyCodecHolder.PREDICATE_CODEC;
+    }
+
+    public static Codec<IVeinCondition> codec() {
+        return LazyCodecHolder.CODEC;
+    }
 }
