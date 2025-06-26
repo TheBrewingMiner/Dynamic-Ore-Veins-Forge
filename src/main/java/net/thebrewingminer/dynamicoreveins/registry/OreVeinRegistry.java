@@ -7,7 +7,5 @@ import net.thebrewingminer.dynamicoreveins.DynamicOreVeins;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 
 public class OreVeinRegistry {
-    public static class ModRegistries {
         public static final ResourceKey<Registry<OreVeinConfig>> ORE_VEIN_REGISTRY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(DynamicOreVeins.MOD_ID, "ore_vein"));
-    }
 }
