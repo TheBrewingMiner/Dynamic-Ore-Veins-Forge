@@ -2,7 +2,7 @@ package net.thebrewingminer.dynamicoreveins.codec.condition;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
@@ -11,8 +11,8 @@ import java.util.List;
 
 public class IsDimension{
     public static final Codec<List<ResourceKey<Level>>> CODEC = Codec.either(
-            ResourceKey.codec(Registry.DIMENSION_REGISTRY),
-            ResourceKey.codec(Registry.DIMENSION_REGISTRY).listOf()
+            ResourceKey.codec(Registries.DIMENSION),
+            ResourceKey.codec(Registries.DIMENSION).listOf()
     ).xmap(
             either -> either.map(
                     Collections::singletonList,
