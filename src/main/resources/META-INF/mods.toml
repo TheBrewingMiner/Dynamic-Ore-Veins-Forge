@@ -1,4 +1,4 @@
-issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/"
+issueTrackerURL="https://github.com/TheBrewingMiner/Dynamic-Ore-Veins-Forge/issues"
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
