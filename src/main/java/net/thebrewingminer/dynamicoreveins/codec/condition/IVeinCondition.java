@@ -6,7 +6,7 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
-public interface IVeinCondition {
+public interface IVeinCondition{
     Codec<? extends IVeinCondition> codec();
     String type();
     boolean test(Context context);

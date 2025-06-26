@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProvider;
 
-public class ResourceKeyOrBlockState {
+public class ResourceKeyOrBlockState{
     public static final Codec<BlockStateProvider> CODEC = Codec.either(
             ResourceLocation.CODEC,
             BlockStateProvider.CODEC

@@ -1,3 +1,3 @@
 package net.thebrewingminer.dynamicoreveins.registry;
 
-public class OreVeinRegistry {}
+public class OreVeinRegistry{}

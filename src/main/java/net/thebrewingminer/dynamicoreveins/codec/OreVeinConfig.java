@@ -22,7 +22,7 @@ public class OreVeinConfig {
             IsDimension.CODEC.fieldOf("dimension").forGetter(config -> config.dimension)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 
-    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider rawOre, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension) {
+    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider rawOre, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension){
         this.ore = ore;
         this.raw_ore = rawOre;
         this.fillerBlock = fillerBlock;

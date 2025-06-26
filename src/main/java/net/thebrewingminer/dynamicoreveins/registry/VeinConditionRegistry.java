@@ -12,7 +12,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AnyConditio
 
 import java.util.Map;
 
-public class VeinConditionRegistry {
+public class VeinConditionRegistry{
     public static final Map<String, Codec<? extends IVeinCondition>> REGISTRY = Map.of(
             "minecraft:height_range", HeightRangeCondition.CODEC,
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
@@ -20,7 +20,7 @@ public class VeinConditionRegistry {
             "dynamic_veins:all_of", AnyConditions.CODEC
     );
 
-    public static final Codec<IVeinCondition> CODEC = new Codec<>() {
+    public static final Codec<IVeinCondition> CODEC = new Codec<>(){
         @Override
         public <T> DataResult<Pair<IVeinCondition, T>> decode(DynamicOps<T> ops, T input) {
             return ops.getMap(input).flatMap(map -> {
@@ -43,7 +43,7 @@ public class VeinConditionRegistry {
         }
 
         @Override
-        public <T> DataResult<T> encode(IVeinCondition input, DynamicOps<T> ops, T prefix) {
+        public <T> DataResult<T> encode(IVeinCondition input, DynamicOps<T> ops, T prefix){
             String typeName = input.type();
             @SuppressWarnings("unchecked")
             Codec<IVeinCondition> codec = (Codec<IVeinCondition>) VeinConditionRegistry.REGISTRY.get(typeName);
