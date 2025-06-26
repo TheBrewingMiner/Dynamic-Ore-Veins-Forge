@@ -1,0 +1,6 @@
+{
+    "ore": "minecraft:deepslate_iron_ore",
+    "secondary_ore": "minecraft:raw_iron_block",
+    "secondary_ore_chance": 0.02,
+    "filler_block": "minecraft:tuff"
+}
