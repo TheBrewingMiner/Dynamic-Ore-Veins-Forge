@@ -3,7 +3,7 @@ package net.thebrewingminer.dynamicoreveins.codec.condition.predicate;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
-import net.thebrewingminer.dynamicoreveins.codec.condition.VeinConditionRegistry;
+import net.thebrewingminer.dynamicoreveins.registry.VeinConditionRegistry;
 
 import java.util.List;
 import java.util.function.Function;

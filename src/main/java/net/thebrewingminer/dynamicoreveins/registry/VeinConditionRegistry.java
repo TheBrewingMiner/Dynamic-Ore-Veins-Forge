@@ -1,9 +1,12 @@
-package net.thebrewingminer.dynamicoreveins.codec.condition;
+package net.thebrewingminer.dynamicoreveins.registry;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
+import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
+import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AllConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AnyConditions;
 
