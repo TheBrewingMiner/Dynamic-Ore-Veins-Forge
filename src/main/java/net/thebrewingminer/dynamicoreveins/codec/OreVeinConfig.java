@@ -5,27 +5,36 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.thebrewingminer.dynamicoreveins.codec.condition.AlwaysTrueCondition;
+import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IsDimension;
+import net.thebrewingminer.dynamicoreveins.registry.VeinConditionRegistry;
 
 import java.util.List;
 
-public class OreVeinConfig {
+public class OreVeinConfig{
     public final BlockStateProvider ore;
-    public final BlockStateProvider raw_ore;
+    public final BlockStateProvider secondary_ore;
+    public final float secondary_ore_chance;
     public final BlockStateProvider fillerBlock;
     public final List<ResourceKey<Level>> dimension;
+    public final IVeinCondition conditions;
 
     public static final Codec<OreVeinConfig> CODEC = RecordCodecBuilder.create(oreVeinConfigInstance -> oreVeinConfigInstance.group(
             ResourceKeyOrBlockState.CODEC.fieldOf("ore").forGetter(config -> config.ore),
-            ResourceKeyOrBlockState.CODEC.fieldOf("raw_ore").forGetter(config -> config.raw_ore),
+            ResourceKeyOrBlockState.CODEC.fieldOf("secondary_ore").forGetter(config -> config.secondary_ore),
+            Codec.floatRange(0.0f, 1.0f).fieldOf("secondary_ore_chance").forGetter(config -> config.secondary_ore_chance),
             ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
-            IsDimension.CODEC.fieldOf("dimension").forGetter(config -> config.dimension)
+            IsDimension.CODEC.fieldOf("dimension").forGetter(config -> config.dimension),
+            VeinConditionRegistry.CODEC.optionalFieldOf("conditions", new AlwaysTrueCondition()).forGetter(config -> config.conditions)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 
-    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider rawOre, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension){
+    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension, IVeinCondition conditions){
         this.ore = ore;
-        this.raw_ore = rawOre;
+        this.secondary_ore = secondaryOre;
+        this.secondary_ore_chance = secondaryOreChance;
         this.fillerBlock = fillerBlock;
         this.dimension = dimension;
+        this.conditions = conditions;
     }
 }
