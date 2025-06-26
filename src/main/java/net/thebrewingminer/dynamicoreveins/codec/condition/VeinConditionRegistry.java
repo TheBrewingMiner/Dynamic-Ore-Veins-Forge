@@ -4,13 +4,17 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AllConditions;
+import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AnyConditions;
 
 import java.util.Map;
 
 public class VeinConditionRegistry {
     public static final Map<String, Codec<? extends IVeinCondition>> REGISTRY = Map.of(
             "minecraft:height_range", HeightRangeCondition.CODEC,
-            "minecraft:density_threshold", DensityFunctionThreshold.CODEC
+            "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
+            "dynamic_veins:any_of", AllConditions.CODEC,
+            "dynamic_veins:all_of", AnyConditions.CODEC
     );
 
     public static final Codec<IVeinCondition> CODEC = new Codec<>() {
