@@ -21,7 +21,7 @@ public abstract class CombiningCondition implements IVeinCondition{
 
     public static <T extends CombiningCondition> Codec<T> codec(Function<List<IVeinCondition>, T> factory){
         return RecordCodecBuilder.create(instance -> instance.group(
-                VeinConditionRegistry.CODEC.listOf().fieldOf("conditions").forGetter(CombiningCondition::conditions)
+                VeinConditionRegistry.PREDICATE_CODEC.listOf().fieldOf("conditions").forGetter(CombiningCondition::conditions)
         ).apply(instance, factory));
     }
 }
