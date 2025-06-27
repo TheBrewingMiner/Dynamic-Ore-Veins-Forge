@@ -4,9 +4,10 @@ import com.mojang.serialization.Codec;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 public interface IVeinCondition {
+    boolean test(DensityFunction.FunctionContext context);
     Codec<? extends IVeinCondition> codec();
     String type();
-    boolean test(DensityFunction densityFunction);
+
     /* Deprecated interface wrapper*/
 //    interface Context {
 //        BlockPos pos();
