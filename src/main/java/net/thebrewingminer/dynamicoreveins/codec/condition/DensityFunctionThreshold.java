@@ -38,11 +38,11 @@ public record DensityFunctionThreshold(DensityFunction function, double minThres
     }
 
     @Override
-    public boolean test(DensityFunction.FunctionContext context){
+    public boolean test(Context context){
         if(function == null){
             throw new IllegalStateException("Density function in condition should not be null");
         }
-        double value = function.compute(context);
+        double value = context.compute(function);
         return (value >= minThreshold && value <= maxThreshold);
     }
 
