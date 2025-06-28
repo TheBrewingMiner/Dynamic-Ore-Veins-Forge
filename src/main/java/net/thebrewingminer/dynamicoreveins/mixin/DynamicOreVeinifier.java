@@ -17,6 +17,7 @@ import net.thebrewingminer.dynamicoreveins.accessor.HeightRangeWrapper;
 import net.thebrewingminer.dynamicoreveins.accessor.NoiseChunkAccessor;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
+import net.thebrewingminer.dynamicoreveins.codec.condition.FlattenConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
@@ -72,33 +73,36 @@ public class DynamicOreVeinifier {
             @Override public double compute(DensityFunction function) { return function.compute(functionContext); }
         };
 
+        DensityFunction veinToggle = routerVeinToggle;
         DensityFunction veinRidged = routerVeinRidged;
         DensityFunction veinGap = routerVeinGap;
 
         OreVeinConfig selectedConfig = null;
 
         for (OreVeinConfig veinConfig : veinList) {
-            DensityFunction veinToggle;
+            DensityFunction localVeinToggle;
 
             /* Check if in suitable dimension. */
             if (!veinConfig.dimension.contains(currDimension)) continue;
 
             /* Use configured vein toggle if specified */
-            veinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
+            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
 
             /* Calculate if in toggle threshold */
             if (!inThreshold(veinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
 
             if (veinConfig.conditions.test(veinContext)){
                 selectedConfig = veinConfig;
+                veinToggle = localVeinToggle;
                 break;
             }
         }
 
-        // Vanilla Veinifier
-
-        return null;
+        List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions);
+        HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
+        return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
+
 
     @Unique
     private static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context context) {
@@ -135,7 +139,8 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig selectedConfig, IVeinCondition.Context veinContext){
-
+    private static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinToggle, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig selectedConfig, IVeinCondition.Context veinContext, HeightRangeWrapper heightRange){
+        BlockState toReturn = null;
+        return toReturn;
     }
 }
