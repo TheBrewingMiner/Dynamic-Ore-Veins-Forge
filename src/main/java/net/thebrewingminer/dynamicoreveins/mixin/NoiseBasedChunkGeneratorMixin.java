@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.thebrewingminer.dynamicoreveins.accessor.ChunkGeneratorAwareNoiseChunk;
-import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareNoiseChunk;
+import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -33,7 +33,7 @@ public class NoiseBasedChunkGeneratorMixin {
             at = @At("RETURN")
     )
     private void injectDimension(ChunkAccess chunk, StructureManager structureManager, Blender blender, RandomState random, CallbackInfoReturnable<NoiseChunk> cir) {
-        ResourceKey<Level> dimension = ((DimensionAwareNoiseChunk) chunk).getDimension();
-        ((DimensionAwareNoiseChunk) cir.getReturnValue()).setDimension(dimension);
+        ResourceKey<Level> dimension = ((DimensionAwareChunk) chunk).getDimension();
+        ((DimensionAwareChunk) cir.getReturnValue()).setDimension(dimension);
     }
 }

@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.thebrewingminer.dynamicoreveins.accessor.ChunkGeneratorAwareNoiseChunk;
-import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareNoiseChunk;
+import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareChunk;
 import net.thebrewingminer.dynamicoreveins.accessor.HeightRangeWrapper;
 import net.thebrewingminer.dynamicoreveins.accessor.NoiseChunkAccessor;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
@@ -52,7 +52,7 @@ public class DynamicOreVeinifier {
 
         LevelHeightAccessor levelHeightAccessor = ((NoiseChunkAccessor)this).getHeightAccessor();
         ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
-        ResourceKey<Level> currDimension = ((DimensionAwareNoiseChunk)this).getDimension();
+        ResourceKey<Level> currDimension = ((DimensionAwareChunk)this).getDimension();
 
         return (DensityFunction.FunctionContext functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList);
     }
