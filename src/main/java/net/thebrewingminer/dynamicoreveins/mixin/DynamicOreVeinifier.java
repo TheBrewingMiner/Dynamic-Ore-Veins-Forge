@@ -43,6 +43,8 @@ public class DynamicOreVeinifier {
     )
     private NoiseChunk.BlockStateFiller dynamicOreVeinifier(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
+        System.out.println("Ore Vein Registry size: " + veinRegistry.size());
+        veinRegistry.stream().forEach(vein -> System.out.println("Loaded OreVeinConfig: " + vein));
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
         List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
                                                                                             // in case of future use.
@@ -91,6 +93,7 @@ public class DynamicOreVeinifier {
             /* Calculate if in toggle threshold */
             if (!inThreshold(veinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
 
+            System.out.println("Testing veinConfig: " + veinConfig);
             if (veinConfig.conditions.test(veinContext)){
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
@@ -98,6 +101,7 @@ public class DynamicOreVeinifier {
             }
         }
 
+        if (selectedConfig == null) return null;
         List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions);
         HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);

@@ -11,7 +11,7 @@ public class OreVeinRegistryHolder {
 
     public static void init(RegistryAccess registryAccess) {
         access = registryAccess;
-        Registry<OreVeinConfig> oreVeinRegistry = getRegistry();
+        getRegistry();
     }
 
     public static Registry<OreVeinConfig> getRegistry() {
