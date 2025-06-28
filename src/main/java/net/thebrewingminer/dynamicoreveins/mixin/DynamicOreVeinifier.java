@@ -10,11 +10,14 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
+import net.minecraft.world.level.levelgen.WorldGenerationContext;
 import net.thebrewingminer.dynamicoreveins.accessor.ChunkGeneratorAwareNoiseChunk;
 import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareNoiseChunk;
+import net.thebrewingminer.dynamicoreveins.accessor.HeightRangeWrapper;
 import net.thebrewingminer.dynamicoreveins.accessor.NoiseChunkAccessor;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
+import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,7 +40,7 @@ public class DynamicOreVeinifier {
             target = "Lnet/minecraft/world/level/levelgen/OreVeinifier;create(Lnet/minecraft/world/level/levelgen/DensityFunction;Lnet/minecraft/world/level/levelgen/DensityFunction;Lnet/minecraft/world/level/levelgen/DensityFunction;Lnet/minecraft/world/level/levelgen/PositionalRandomFactory;)Lnet/minecraft/world/level/levelgen/NoiseChunk$BlockStateFiller;"
         )
     )
-    protected NoiseChunk.BlockStateFiller dynamicOreVeinifier(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
+    private NoiseChunk.BlockStateFiller dynamicOreVeinifier(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
         List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
@@ -54,12 +57,12 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
+    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
         return new DensityFunctionThreshold(function, min, max).test(context);
     }
 
     @Unique
-    public BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, LevelHeightAccessor levelHeightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, List<OreVeinConfig> veinList){
+    private BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, LevelHeightAccessor levelHeightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, List<OreVeinConfig> veinList){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
@@ -95,5 +98,44 @@ public class DynamicOreVeinifier {
         // Vanilla Veinifier
 
         return null;
+    }
+
+    @Unique
+    private static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context context) {
+        WorldGenerationContext worldGenContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor());
+        int DEFAULT_MIN_Y = -64;
+        int DEFAULT_MAX_Y = 320;
+        int minOverlapY = Integer.MIN_VALUE;
+        int maxOverlapY = Integer.MAX_VALUE;
+        int y = context.pos().getY();
+        HeightRangeWrapper firstMatchingRange = null;
+        boolean overlappingRanges = false;
+
+        for (IVeinCondition condition : conditions) {
+            if (condition instanceof HeightRangeCondition heightCondition) {
+                int minY = heightCondition.minInclusive().resolveY(worldGenContext);
+                int maxY = heightCondition.maxInclusive().resolveY(worldGenContext);
+                if (y >= minY && y <= maxY) {
+                    if (firstMatchingRange == null){
+                        firstMatchingRange = new HeightRangeWrapper(minY, maxY);
+                    }
+                    overlappingRanges = true;
+                    if (minY > minOverlapY) minOverlapY = minY;
+                    if (maxY < maxOverlapY) maxOverlapY = maxY;
+                }
+            }
+        }
+        if (overlappingRanges && (minOverlapY <= maxOverlapY)){
+            return (new HeightRangeWrapper(minOverlapY, maxOverlapY));
+        } else if (firstMatchingRange != null){
+            return firstMatchingRange;
+        } else {
+            return new HeightRangeWrapper(DEFAULT_MIN_Y, DEFAULT_MAX_Y);
+        }
+    }
+
+    @Unique
+    private static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig selectedConfig, IVeinCondition.Context veinContext){
+
     }
 }
