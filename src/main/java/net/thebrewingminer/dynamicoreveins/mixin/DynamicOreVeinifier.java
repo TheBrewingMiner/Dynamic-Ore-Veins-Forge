@@ -40,8 +40,8 @@ public class DynamicOreVeinifier {
     protected NoiseChunk.BlockStateFiller dynamicOreVeinifier(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
-        List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);
-
+        List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
+                                                                                            // in case of future use.
         long PLACE_HOLDER_SEED = 1;
         Random random = new Random(PLACE_HOLDER_SEED);
         Collections.shuffle(shufflingList, random);
@@ -49,10 +49,10 @@ public class DynamicOreVeinifier {
         return (DensityFunction.FunctionContext context) -> computeBlockState(context, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList);
     }
 
+    @Unique
     private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
         return new DensityFunctionThreshold(function, min, max).test(context);
     }
-
 
     @Unique
     private BlockState computeBlockState(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList){
