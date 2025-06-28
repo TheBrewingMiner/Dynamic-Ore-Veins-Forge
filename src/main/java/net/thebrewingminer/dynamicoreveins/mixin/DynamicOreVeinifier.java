@@ -59,12 +59,13 @@ public class DynamicOreVeinifier {
             @Override public double compute(DensityFunction function) { return function.compute(context); }
         };
 
-        // Your vein decision logic here
         for (OreVeinConfig veinConfig : veinList) {
             if (veinConfig.conditions.test(veinContext)){
                 return Blocks.STONE.defaultBlockState();
             }
         }
+
+        // Vanilla Veinifier
 
         return null;
     }
