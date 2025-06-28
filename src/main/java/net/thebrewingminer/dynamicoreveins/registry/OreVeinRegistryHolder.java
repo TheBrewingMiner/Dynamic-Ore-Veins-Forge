@@ -16,8 +16,12 @@ public class OreVeinRegistryHolder {
 
     public static Registry<OreVeinConfig> getRegistry() {
         if (access == null) {
-            throw new IllegalStateException("RegistryAccess has not been initialized");
+            throw new IllegalStateException("RegistryAccess has not been initialized.");
         }
         return access.registryOrThrow(REGISTRY);
+    }
+
+    public static boolean isInitialized(){
+        return access != null;
     }
 }

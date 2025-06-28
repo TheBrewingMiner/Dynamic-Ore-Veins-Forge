@@ -65,13 +65,13 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-//mixin {
-//    add sourceSets.main, 'dynamic_ore_veins.refmap.json'
-//    config 'dynamic_ore_veins.mixins.json'
-//
-//    debug.verbose = true
-//    debug.export = true
-//}
+mixin {
+    add sourceSets.main, 'dynamic_ore_veins.refmap.json'
+    config 'dynamic_ore_veins.mixins.json'
+
+    debug.verbose = true
+    debug.export = true
+}
 
 tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
