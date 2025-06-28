@@ -46,7 +46,11 @@ public class DynamicOreVeinifier {
         Random random = new Random(PLACE_HOLDER_SEED);
         Collections.shuffle(shufflingList, random);
 
-        return (DensityFunction.FunctionContext context) -> computeBlockState(context, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList);
+        LevelHeightAccessor levelHeightAccessor = ((NoiseChunkAccessor)this).getHeightAccessor();
+        ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
+        ResourceKey<Level> currDimension = ((DimensionAwareNoiseChunk)this).getDimension();
+
+        return (DensityFunction.FunctionContext context) -> selectVein(context, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList);
     }
 
     @Unique
@@ -55,11 +59,8 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private BlockState computeBlockState(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList){
+    private BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, LevelHeightAccessor levelHeightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, List<OreVeinConfig> veinList){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
-        LevelHeightAccessor levelHeightAccessor = ((NoiseChunkAccessor)this).getHeightAccessor();
-        ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
-        ResourceKey<Level> currDimension = ((DimensionAwareNoiseChunk)this).getDimension();
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
             @Override public BlockPos pos() { return pos;}
@@ -68,19 +69,19 @@ public class DynamicOreVeinifier {
             @Override public double compute(DensityFunction function) { return function.compute(functionContext); }
         };
 
-        DensityFunction veinToggle = routerVeinToggle;
         DensityFunction veinRidged = routerVeinRidged;
         DensityFunction veinGap = routerVeinGap;
 
         OreVeinConfig selectedConfig = null;
 
         for (OreVeinConfig veinConfig : veinList) {
+            DensityFunction veinToggle;
 
             /* Check if in suitable dimension. */
             if (!veinConfig.dimension.contains(currDimension)) continue;
 
             /* Use configured vein toggle if specified */
-            if(veinConfig.veinToggle.function() != null) veinToggle = veinConfig.veinToggle.function();
+            veinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
 
             /* Calculate if in toggle threshold */
             if (!inThreshold(veinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
