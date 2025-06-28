@@ -2,16 +2,19 @@ package net.thebrewingminer.dynamicoreveins.mixin;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.thebrewingminer.dynamicoreveins.accessor.ChunkGeneratorAwareNoiseChunk;
+import net.thebrewingminer.dynamicoreveins.accessor.DimensionAwareNoiseChunk;
 import net.thebrewingminer.dynamicoreveins.accessor.NoiseChunkAccessor;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
+import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,22 +49,45 @@ public class DynamicOreVeinifier {
         return (DensityFunction.FunctionContext context) -> computeBlockState(context, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList);
     }
 
+    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
+        return new DensityFunctionThreshold(function, min, max).test(context);
+    }
+
+
     @Unique
-    private BlockState computeBlockState(DensityFunction.FunctionContext context, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList){
-        BlockPos pos = new BlockPos(context.blockX(), context.blockY(), context.blockZ());
+    private BlockState computeBlockState(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList){
+        BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
         LevelHeightAccessor levelHeightAccessor = ((NoiseChunkAccessor)this).getHeightAccessor();
         ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
+        ResourceKey<Level> currDimension = ((DimensionAwareNoiseChunk)this).getDimension();
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
             @Override public BlockPos pos() { return pos;}
             @Override public LevelHeightAccessor heightAccessor() { return levelHeightAccessor; }
             @Override public ChunkGenerator chunkGenerator() { return chunkGenerator; }
-            @Override public double compute(DensityFunction function) { return function.compute(context); }
+            @Override public double compute(DensityFunction function) { return function.compute(functionContext); }
         };
 
+        DensityFunction veinToggle = routerVeinToggle;
+        DensityFunction veinRidged = routerVeinRidged;
+        DensityFunction veinGap = routerVeinGap;
+
+        OreVeinConfig selectedConfig = null;
+
         for (OreVeinConfig veinConfig : veinList) {
+
+            /* Check if in suitable dimension. */
+            if (!veinConfig.dimension.contains(currDimension)) continue;
+
+            /* Use configured vein toggle if specified */
+            if(veinConfig.veinToggle.function() != null) veinToggle = veinConfig.veinToggle.function();
+
+            /* Calculate if in toggle threshold */
+            if (!inThreshold(veinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
+
             if (veinConfig.conditions.test(veinContext)){
-                return Blocks.STONE.defaultBlockState();
+                selectedConfig = veinConfig;
+                break;
             }
         }
 
