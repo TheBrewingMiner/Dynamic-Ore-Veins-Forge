@@ -50,16 +50,16 @@ public class DynamicOreVeinifier {
         ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
         ResourceKey<Level> currDimension = ((DimensionAwareNoiseChunk)this).getDimension();
 
-        return (DensityFunction.FunctionContext context) -> selectVein(context, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList);
+        return (DensityFunction.FunctionContext functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList);
     }
 
     @Unique
-    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
+    private boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
         return new DensityFunctionThreshold(function, min, max).test(context);
     }
 
     @Unique
-    private BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, LevelHeightAccessor levelHeightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, List<OreVeinConfig> veinList){
+    public BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, LevelHeightAccessor levelHeightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, List<OreVeinConfig> veinList){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
