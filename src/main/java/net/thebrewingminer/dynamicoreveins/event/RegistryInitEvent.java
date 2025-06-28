@@ -1,11 +1,7 @@
 package net.thebrewingminer.dynamicoreveins.event;
 
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.thebrewingminer.dynamicoreveins.DynamicOreVeins;
