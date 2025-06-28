@@ -104,7 +104,7 @@ public class DynamicOreVeinifier {
     private static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context context) {
         WorldGenerationContext worldGenContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor());
         HeightRangeWrapper firstMatchingRange = null;
-        boolean overlappingRanges = false;
+        int matchingRangeCounter = 0;
         int DEFAULT_MIN_Y = -64;
         int DEFAULT_MAX_Y = 320;
         int minOverlapY = Integer.MIN_VALUE;
@@ -116,16 +116,16 @@ public class DynamicOreVeinifier {
                 int minY = heightCondition.minInclusive().resolveY(worldGenContext);
                 int maxY = heightCondition.maxInclusive().resolveY(worldGenContext);
                 if (y >= minY && y <= maxY) {
+                    matchingRangeCounter++;
                     if (firstMatchingRange == null){
                         firstMatchingRange = new HeightRangeWrapper(minY, maxY);
                     }
-                    overlappingRanges = true;
                     if (minY > minOverlapY) minOverlapY = minY;
                     if (maxY < maxOverlapY) maxOverlapY = maxY;
                 }
             }
         }
-        if (overlappingRanges && (minOverlapY <= maxOverlapY)){
+        if ((matchingRangeCounter > 1) && (minOverlapY <= maxOverlapY)){
             return (new HeightRangeWrapper(minOverlapY, maxOverlapY));
         } else if (firstMatchingRange != null){
             return firstMatchingRange;
