@@ -3,5 +3,5 @@
     "secondary_ore": "minecraft:raw_iron_block",
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:tuff",
-    "vein_toggle": "minecraft:overworld/continents"
+    "vein_toggle": {}
 }

@@ -28,12 +28,12 @@ public class OreVeinConfig {
             ResourceKeyOrBlockState.CODEC.fieldOf("secondary_ore").forGetter(config -> config.secondary_ore),
             Codec.floatRange(0.0f, 1.0f).fieldOf("secondary_ore_chance").orElse(0.02f).forGetter(config -> config.secondary_ore_chance),
             ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
+            DensityFunctionThreshold.CODEC.optionalFieldOf("vein_toggle", new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD)).forGetter(config -> config.veinToggle),
             IsDimension.CODEC.fieldOf("dimension").orElse(Collections.singletonList(Level.OVERWORLD)).forGetter(config -> config.dimension),
-            DensityFunctionThreshold.CODEC.fieldOf("vein_toggle").orElse(null).forGetter(config -> config.veinToggle),
             VeinConditionRegistry.codec().optionalFieldOf("conditions", new AlwaysTrueCondition()).forGetter(config -> config.conditions)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 
-    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, List<ResourceKey<Level>> dimension, DensityFunctionThreshold veinToggle, IVeinCondition conditions){
+    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, DensityFunctionThreshold veinToggle, List<ResourceKey<Level>> dimension, IVeinCondition conditions){
         this.ore = ore;
         this.secondary_ore = secondaryOre;
         this.secondary_ore_chance = secondaryOreChance;
