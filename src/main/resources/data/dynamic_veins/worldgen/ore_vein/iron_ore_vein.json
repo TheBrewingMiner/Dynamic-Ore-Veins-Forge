@@ -3,5 +3,14 @@
     "secondary_ore": "minecraft:raw_iron_block",
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:tuff",
-    "vein_toggle": {}
+    "conditions": {
+        "type": "dynamic_veins:density_threshold",
+        "input": {
+            "type": "minecraft:y_clamped_gradient",
+            "from_value": -4064,
+            "from_y": -4064,
+            "to_value": 4062,
+            "to_y": 4062
+        }
+    }
 }
