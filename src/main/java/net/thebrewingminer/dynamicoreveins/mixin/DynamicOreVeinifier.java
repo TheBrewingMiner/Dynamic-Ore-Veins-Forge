@@ -81,20 +81,28 @@ public class DynamicOreVeinifier {
 
         for (OreVeinConfig veinConfig : veinList) {
             DensityFunction localVeinToggle;
+            DensityFunction localVeinRidged;
+            DensityFunction localVeinGap;
 
             /* Check if in suitable dimension. */
             if (!veinConfig.dimension.contains(currDimension)) continue;
 
-            /* Use configured vein toggle if specified */
+            /* Use configured vein toggle and shaping DFs if specified */
             localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
+            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function() : routerVeinRidged);
+            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function() : routerVeinGap);
 
-            /* Calculate if in toggle threshold */
-            if (!inThreshold(veinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
+            /* Calculate if in toggle's and shaping DFs' threshold */
+            if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
+            if (!inThreshold(localVeinRidged, veinConfig.veinRidged.minThreshold(), veinConfig.veinRidged.maxThreshold(), veinContext)) continue;
+            if (!inThreshold(localVeinGap, veinConfig.veinGap.minThreshold(), veinConfig.veinGap.maxThreshold(), veinContext)) continue;
 
             System.out.println("Testing veinConfig: " + veinConfig);
             if (veinConfig.conditions.test(veinContext)){
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
+                veinRidged = localVeinRidged;
+                veinGap = localVeinGap;
                 break;
             }
         }
