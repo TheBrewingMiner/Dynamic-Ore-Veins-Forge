@@ -46,6 +46,7 @@ public class DynamicOreVeinifier {
     )
     private NoiseChunk.BlockStateFiller createVein(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
+        if(veinRegistry.size() == 0 || veinRegistry == null) { return ((functionContext) -> null); }    // If registry is empty or null by now, don't do anything else. Return like nothing happened.
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
         List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
                                                                                             // in case of future use.
@@ -57,7 +58,7 @@ public class DynamicOreVeinifier {
         ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
         ResourceKey<Level> currDimension = ((DimensionAwareChunk)this).getDimension();
 
-        return ((DensityFunction.FunctionContext functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList, randomFactory));
+        return ((functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList, randomFactory));
     }
 
     @Unique
@@ -101,7 +102,6 @@ public class DynamicOreVeinifier {
             if (!inThreshold(localVeinRidged, veinConfig.veinRidged.minThreshold(), veinConfig.veinRidged.maxThreshold(), veinContext)) continue;
             if (!inThreshold(localVeinGap, veinConfig.veinGap.minThreshold(), veinConfig.veinGap.maxThreshold(), veinContext)) continue;
 
-            System.out.println("Testing veinConfig: " + veinConfig);
             if (veinConfig.conditions.test(veinContext)){
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
@@ -119,15 +119,15 @@ public class DynamicOreVeinifier {
 
 
     @Unique
-    private static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context context) {
-        WorldGenerationContext worldGenContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor());
+    private static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context veinContext) {
+        WorldGenerationContext worldGenContext = new WorldGenerationContext(veinContext.chunkGenerator(), veinContext.heightAccessor());
         HeightRangeWrapper firstMatchingRange = null;
         int matchingRangeCounter = 0;
         int DEFAULT_MIN_Y = -64;
         int DEFAULT_MAX_Y = 320;
         int minOverlapY = Integer.MIN_VALUE;
         int maxOverlapY = Integer.MAX_VALUE;
-        int y = context.pos().getY();
+        int y = veinContext.pos().getY();
 
         for (IVeinCondition condition : conditions) {
             if (condition instanceof HeightRangeCondition heightCondition) {
@@ -136,19 +136,19 @@ public class DynamicOreVeinifier {
                 if (y >= minY && y <= maxY) {
                     matchingRangeCounter++;
                     if (firstMatchingRange == null){
-                        firstMatchingRange = new HeightRangeWrapper(minY, maxY);
+                        firstMatchingRange = new HeightRangeWrapper(minY, maxY);    // For the first range the current pos is, find the min and max of that range.
                     }
-                    if (minY > minOverlapY) minOverlapY = minY;
-                    if (maxY < maxOverlapY) maxOverlapY = maxY;
+                    if (minY > minOverlapY) minOverlapY = minY;                     // Set those as the found mins and maxes. If another height range is found for
+                    if (maxY < maxOverlapY) maxOverlapY = maxY;                     // this position, expand to find the min and max of all found ranges.
                 }
             }
         }
         if ((matchingRangeCounter > 1) && (minOverlapY <= maxOverlapY)){
-            return (new HeightRangeWrapper(minOverlapY, maxOverlapY));
-        } else if (firstMatchingRange != null){
+            return (new HeightRangeWrapper(minOverlapY, maxOverlapY));      // Return a new range for the expanded range if more than one valid range was found for this pos.
+        } else if (firstMatchingRange != null){                             // If only one valid range was found, return that one's range.
             return firstMatchingRange;
         } else {
-            return new HeightRangeWrapper(DEFAULT_MIN_Y, DEFAULT_MAX_Y);
+            return new HeightRangeWrapper(DEFAULT_MIN_Y, DEFAULT_MAX_Y);    // Otherwise, default if no valid range was found.
         }
     }
 
