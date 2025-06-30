@@ -19,6 +19,7 @@ public class OreVeinConfig {
     public final BlockStateProvider secondary_ore;
     public final float secondary_ore_chance;
     public final BlockStateProvider fillerBlock;
+    public final OreRichnessSettings veinSettings;
     public final List<ResourceKey<Level>> dimension;
     public final DensityFunctionThreshold veinToggle;
     public final DensityFunctionThreshold veinRidged;
@@ -33,11 +34,12 @@ public class OreVeinConfig {
             DensityFunctionThreshold.CODEC.optionalFieldOf("vein_toggle", new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD)).forGetter(config -> config.veinToggle),
             DensityFunctionThreshold.CODEC.optionalFieldOf("vein_ridged", new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD)).forGetter(config -> config.veinRidged),
             DensityFunctionThreshold.CODEC.optionalFieldOf("vein_gap", new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD)).forGetter(config -> config.veinGap),
+            OreRichnessSettings.CODEC.optionalFieldOf("vein_settings", OreRichnessSettings.createDefault()).forGetter(config -> config.veinSettings),
             IsDimension.CODEC.fieldOf("dimension").orElse(Collections.singletonList(Level.OVERWORLD)).forGetter(config -> config.dimension),
             VeinConditionRegistry.codec().optionalFieldOf("conditions", new AlwaysTrueCondition()).forGetter(config -> config.conditions)
     ).apply(oreVeinConfigInstance, OreVeinConfig::new));
 
-    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, DensityFunctionThreshold veinToggle, DensityFunctionThreshold veinRidged, DensityFunctionThreshold veinGap, List<ResourceKey<Level>> dimension, IVeinCondition conditions){
+    public OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, DensityFunctionThreshold veinToggle, DensityFunctionThreshold veinRidged, DensityFunctionThreshold veinGap, OreRichnessSettings veinSettings, List<ResourceKey<Level>> dimension, IVeinCondition conditions){
         this.ore = ore;
         this.secondary_ore = secondaryOre;
         this.secondary_ore_chance = secondaryOreChance;
@@ -45,6 +47,7 @@ public class OreVeinConfig {
         this.veinToggle = veinToggle;
         this.veinRidged = veinRidged;
         this.veinGap = veinGap;
+        this.veinSettings = veinSettings;
         this.dimension = dimension;
         this.conditions = conditions;
     }
