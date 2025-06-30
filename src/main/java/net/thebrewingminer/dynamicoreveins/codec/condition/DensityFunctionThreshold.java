@@ -18,8 +18,8 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
 
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(DensityFunctionThreshold::function),
-            Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.MIN_VALUE).forGetter(DensityFunctionThreshold::minThreshold),
-            Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.MAX_VALUE).forGetter(DensityFunctionThreshold::maxThreshold)
+            Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.NEGATIVE_INFINITY).forGetter(DensityFunctionThreshold::minThreshold),
+            Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.POSITIVE_INFINITY).forGetter(DensityFunctionThreshold::maxThreshold)
     ).apply(instance, DensityFunctionThreshold::new));
 
     public static final Codec<DensityFunctionThreshold> CODEC = Codec.either(
