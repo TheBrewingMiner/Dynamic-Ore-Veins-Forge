@@ -54,12 +54,13 @@ public class DynamicOreVeinifier {
         ChunkGenerator chunkGenerator = ((ChunkGeneratorAwareNoiseChunk)this).getGenerator();
         ResourceKey<Level> currDimension = ((DimensionAwareChunk)this).getDimension();
 
-        return (DensityFunction.FunctionContext functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList);
+        return ((DensityFunction.FunctionContext functionContext) -> selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, levelHeightAccessor, chunkGenerator, currDimension, shufflingList));
     }
 
     @Unique
-    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context context) {
-        return new DensityFunctionThreshold(function, min, max).test(context);
+    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context veinContext) {
+        DensityFunctionThreshold tempThreshold = new DensityFunctionThreshold(function, min, max);
+        return tempThreshold.test(veinContext);
     }
 
     @Unique
@@ -150,6 +151,7 @@ public class DynamicOreVeinifier {
 
     @Unique
     private static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinToggle, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig selectedConfig, IVeinCondition.Context veinContext, HeightRangeWrapper heightRange){
+
         BlockState toReturn = null;
         return toReturn;
     }
