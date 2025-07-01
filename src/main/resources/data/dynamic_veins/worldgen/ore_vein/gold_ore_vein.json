@@ -4,27 +4,13 @@
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:granite",
     "vein_toggle": {
-        "input": {
-            "type": "minecraft:interpolated",
-            "argument": {
-                "type": "minecraft:range_choice",
-                "input": "minecraft:y",
-                "max_exclusive": 51,
-                "min_inclusive": -60,
-                "when_in_range": {
-                    "type": "minecraft:noise",
-                    "noise": "minecraft:ore_veininess",
-                    "xz_scale": 1.5,
-                    "y_scale": 1.5
-                },
-                "when_out_of_range": 0
-            }
-        },
         "max_threshold": 0.0
     },
-    "conditions": {
-        "type": "minecraft:height_range",
-        "min_inclusive": -60,
-        "max_inclusive": -8
-    }
+    "conditions": [
+        {
+            "type": "minecraft:height_range",
+            "min_inclusive": { "absolute": -60 },
+            "max_inclusive": { "absolute": -8 }
+        }
+    ]
 }
