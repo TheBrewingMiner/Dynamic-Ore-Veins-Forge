@@ -5,5 +5,16 @@
     "filler_block": "minecraft:granite",
     "vein_toggle": {
         "max_threshold": 0.0
-    }
+    },
+    "conditions": [
+        {
+            "type": "minecraft:height_range",
+            "min_inclusive": {
+                "absolute": -60
+            },
+            "max_inclusive": {
+                "absolute": -8
+            }
+        }
+    ]
 }
