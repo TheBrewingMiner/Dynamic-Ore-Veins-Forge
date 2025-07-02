@@ -46,7 +46,7 @@ public abstract class DynamicOreVeinifier {
     )
     private NoiseChunk.BlockStateFiller createVein(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
-        if(veinRegistry.size() == 0) { return ((functionContext) -> null); }                // If registry is empty or null by now, don't do anything else. Return like nothing happened.
+        if(veinRegistry.size() == 0) { return ((functionContext) -> null); }                // If registry is empty by now, don't do anything else. Return like nothing happened.
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
         List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
                                                                                             // in case of future use.
