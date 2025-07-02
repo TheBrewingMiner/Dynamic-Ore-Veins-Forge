@@ -5,6 +5,10 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "dynamic_ore_veins.refmap.json",
   "mixins": [
+    "ChunkGeneratorMixin",
+    "NoiseBasedChunkGeneratorMixin",
+    "NoiseChunkMixin",
+    "ServerLevelMixin",
     "DynamicOreVeinifier"
   ],
   "injectors": {
