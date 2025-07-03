@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.*;
 import net.thebrewingminer.dynamicoreveins.accessor.HeightRangeWrapper;
 import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
 import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
+import net.thebrewingminer.dynamicoreveins.accessor.WorldgenContextCache;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
@@ -58,26 +59,16 @@ public abstract class DynamicOreVeinifier {
             LevelHeightAccessor heightAccessor = wgContext.getHeightAccessor();
             ResourceKey<Level> currDimension = wgContext.getDimension();
 
-//            IWorldgenContext wgContext = (IWorldgenContext)noiseChunk;
-//
-//            ChunkGenerator chunkGenerator = wgContext.getChunkGenerator();
-//            LevelHeightAccessor heightAccessor = wgContext.getHeightAccessor();
-//            ResourceKey<Level> currDimension = wgContext.getDimension();
-//
-//            if (currDimension == null && chunkGenerator instanceof IDimensionAware dimAware) {
-//                currDimension = dimAware.getDimension();
-//            }
-//
-//            // Final fallback (slow but safe): use the static WorldgenContextCache
-//            if ((currDimension == null || chunkGenerator == null || heightAccessor == null) && currDimension != null) {
-//                WorldgenContextCache.WGContext fallback = WorldgenContextCache.getContext(currDimension);
-//                if (fallback != null) {
-//                    if (chunkGenerator == null) chunkGenerator = fallback.generator();
-//                    if (heightAccessor == null) heightAccessor = fallback.heightAccessor();
-//                }
-//            }
+            // Final fallback: use the static WorldgenContextCache
+            if ((chunkGenerator == null || heightAccessor == null) && currDimension != null) {
+                WorldgenContextCache.WGContext fallback = WorldgenContextCache.getContext(currDimension);
+                if (fallback != null) {
+                    if (chunkGenerator == null) chunkGenerator = fallback.generator();
+                    if (heightAccessor == null) heightAccessor = fallback.heightAccessor();
+                }
+            }
 
-//             If still missing required info, log once and return null
+//          If still missing required info, log once and return null
             if (currDimension == null || chunkGenerator == null || heightAccessor == null) {
                 System.err.println("-------------------------------------------------------------------------------------------------------");
                 System.err.println("[DOV] Warning: Worldgen context missing during BlockStateFiller evaluation. Skipping vein placement.");
