@@ -14,26 +14,26 @@ public record OreRichnessSettings(float minRichness, float maxRichness, float mi
     public static final double DEFAULT_MAX_EDGE_ROUNDOFF = 0.2;
 
     public static final Codec<OreRichnessSettings> CODEC = RecordCodecBuilder.create(oreRichnessSettingsInstance -> oreRichnessSettingsInstance.group(
-            Codec.FLOAT.fieldOf("min_ore_richness").orElse(DEFAULT_MIN_RICHNESS).forGetter(OreRichnessSettings::minRichness),
-            Codec.FLOAT.fieldOf("max_ore_richness").orElse(DEFAULT_MAX_RICHNESS).forGetter(OreRichnessSettings::maxRichness),
-            Codec.FLOAT.fieldOf("min_richness_threshold").orElse(DEFAULT_MIN_RICHNESS_THRESHOLD).forGetter(OreRichnessSettings::minRichnessThreshold),
-            Codec.FLOAT.fieldOf("max_richness_threshold").orElse(DEFAULT_MAX_RICHNESS_THRESHOLD).forGetter(OreRichnessSettings::maxRichnessThreshold),
-            Codec.FLOAT.fieldOf("vein_solidness").orElse(DEFAULT_VEIN_SOLIDNESS).forGetter(OreRichnessSettings::veinSolidness),
-            Codec.FLOAT.fieldOf("skip_ore_threshold").orElse(DEFAULT_SKIP_ORE_THRESHOLD).forGetter(OreRichnessSettings::skipOreThreshold),
-            Codec.INT.fieldOf("edge_roundoff_begin").orElse(DEFAULT_EDGE_ROUNDOFF_BEGIN).forGetter(OreRichnessSettings::edgeRoundOffBegin),
-            Codec.DOUBLE.fieldOf("max_edge_roundoff").orElse(DEFAULT_MAX_EDGE_ROUNDOFF).forGetter(OreRichnessSettings::maxEdgeRoundOff)
+        Codec.FLOAT.fieldOf("min_ore_richness").orElse(DEFAULT_MIN_RICHNESS).forGetter(OreRichnessSettings::minRichness),
+        Codec.FLOAT.fieldOf("max_ore_richness").orElse(DEFAULT_MAX_RICHNESS).forGetter(OreRichnessSettings::maxRichness),
+        Codec.FLOAT.fieldOf("min_richness_threshold").orElse(DEFAULT_MIN_RICHNESS_THRESHOLD).forGetter(OreRichnessSettings::minRichnessThreshold),
+        Codec.FLOAT.fieldOf("max_richness_threshold").orElse(DEFAULT_MAX_RICHNESS_THRESHOLD).forGetter(OreRichnessSettings::maxRichnessThreshold),
+        Codec.FLOAT.fieldOf("vein_solidness").orElse(DEFAULT_VEIN_SOLIDNESS).forGetter(OreRichnessSettings::veinSolidness),
+        Codec.FLOAT.fieldOf("skip_ore_threshold").orElse(DEFAULT_SKIP_ORE_THRESHOLD).forGetter(OreRichnessSettings::skipOreThreshold),
+        Codec.INT.fieldOf("edge_roundoff_begin").orElse(DEFAULT_EDGE_ROUNDOFF_BEGIN).forGetter(OreRichnessSettings::edgeRoundOffBegin),
+        Codec.DOUBLE.fieldOf("max_edge_roundoff").orElse(DEFAULT_MAX_EDGE_ROUNDOFF).forGetter(OreRichnessSettings::maxEdgeRoundOff)
     ).apply(oreRichnessSettingsInstance, OreRichnessSettings::new));
 
     public static OreRichnessSettings createDefault(){
         return new OreRichnessSettings(
-                DEFAULT_MIN_RICHNESS,
-                DEFAULT_MAX_RICHNESS,
-                DEFAULT_MIN_RICHNESS_THRESHOLD,
-                DEFAULT_MAX_RICHNESS_THRESHOLD,
-                DEFAULT_VEIN_SOLIDNESS,
-                DEFAULT_SKIP_ORE_THRESHOLD,
-                DEFAULT_EDGE_ROUNDOFF_BEGIN,
-                DEFAULT_MAX_EDGE_ROUNDOFF
+            DEFAULT_MIN_RICHNESS,
+            DEFAULT_MAX_RICHNESS,
+            DEFAULT_MIN_RICHNESS_THRESHOLD,
+            DEFAULT_MAX_RICHNESS_THRESHOLD,
+            DEFAULT_VEIN_SOLIDNESS,
+            DEFAULT_SKIP_ORE_THRESHOLD,
+            DEFAULT_EDGE_ROUNDOFF_BEGIN,
+            DEFAULT_MAX_EDGE_ROUNDOFF
         );
     }
 }
