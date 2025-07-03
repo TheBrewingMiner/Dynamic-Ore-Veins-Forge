@@ -7,9 +7,12 @@ import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.thebrewingminer.dynamicoreveins.accessor.IDimensionAware;
+import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
+import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
 import net.thebrewingminer.dynamicoreveins.accessor.WorldgenContextCache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +31,22 @@ public class ServerLevelMixin {
         LevelHeightAccessor heightAccessor = (LevelHeightAccessor)this;
 
         WorldgenContextCache.setContext(pDimensionKey, chunkGenerator, heightAccessor);
-
         System.out.println("Cached generator and height accessor for dimension: " + pDimensionKey.location());
+
+        NoiseGeneratorSettings settings = ((ISettingsAccessor)chunkGenerator).getNoiseGenSettings();
+
+        if ((Object) settings instanceof IWorldgenContext wgContext) {
+            if (chunkGenerator != null && heightAccessor != null) {
+                wgContext.setChunkGenerator(chunkGenerator);
+                wgContext.setDimension(pDimensionKey);
+                wgContext.setHeightAccessor(heightAccessor);
+
+                System.out.println("[DynamicOreVeins] Injected context into NoiseGeneratorSettings for " + pDimensionKey.location());
+            } else {
+                System.err.println("[DynamicOreVeins] Missing generator/heightAccessor for dimension: " + pDimensionKey.location());
+            }
+        } else {
+            System.err.println("[DynamicOreVeins] NoiseGeneratorSettings is not an instance of IWorldgenContext");
+        }
     }
 }

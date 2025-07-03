@@ -23,4 +23,3 @@ abstract class ChunkGeneratorMixin implements IDimensionAware {
         return this.dimension;
     }
 }
-

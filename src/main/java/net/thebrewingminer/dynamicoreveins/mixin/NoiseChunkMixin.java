@@ -1,53 +1,28 @@
 package net.thebrewingminer.dynamicoreveins.mixin;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelHeightAccessor;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseChunk;
+import net.minecraft.world.level.levelgen.*;
+import net.minecraft.world.level.levelgen.blending.Blender;
+import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
 import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(NoiseChunk.class)
-public class NoiseChunkMixin implements IWorldgenContext {
+public class NoiseChunkMixin implements ISettingsAccessor {
 
     @Unique
-    private ChunkGenerator dynamicVeins_generator;
+    private NoiseGeneratorSettings cachedNoiseGenSettings;
 
-    @Unique
-    private LevelHeightAccessor dynamicVeins_heightAccessor;
-
-    @Unique
-    private ResourceKey<Level> dynamicVeins_dimension;
-
-    @Override
-    public void setChunkGenerator(ChunkGenerator generator) {
-        this.dynamicVeins_generator = generator;
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void onConstruct(int pCellCountXZ, RandomState pRandom, int p_224345_, int p_224346_, NoiseSettings pNoiseSettings, DensityFunctions.BeardifierOrMarker pBeardifier, NoiseGeneratorSettings pNoiseGeneratorSettings, Aquifer.FluidPicker pFluidPicker, Blender pBlendifier, CallbackInfo ci){
+        this.cachedNoiseGenSettings = pNoiseGeneratorSettings;
     }
 
     @Override
-    public ChunkGenerator getChunkGenerator() {
-        return this.dynamicVeins_generator;
-    }
-
-    @Override
-    public void setHeightAccessor(LevelHeightAccessor accessor) {
-        this.dynamicVeins_heightAccessor = accessor;
-    }
-
-    @Override
-    public LevelHeightAccessor getHeightAccessor() {
-        return this.dynamicVeins_heightAccessor;
-    }
-
-    @Override
-    public void setDimension(ResourceKey<Level> dimensionKey) {
-        this.dynamicVeins_dimension = dimensionKey;
-    }
-
-    @Override
-    public ResourceKey<Level> getDimension() {
-        return this.dynamicVeins_dimension;
+    public NoiseGeneratorSettings getNoiseGenSettings() {
+        return cachedNoiseGenSettings;
     }
 }

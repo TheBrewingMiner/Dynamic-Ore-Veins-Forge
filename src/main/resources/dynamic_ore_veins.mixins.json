@@ -9,6 +9,7 @@
     "NoiseBasedChunkGeneratorMixin",
     "NoiseChunkMixin",
     "ServerLevelMixin",
+    "NoiseGeneratorSettingsMixin",
     "DynamicOreVeinifier"
   ],
   "injectors": {
