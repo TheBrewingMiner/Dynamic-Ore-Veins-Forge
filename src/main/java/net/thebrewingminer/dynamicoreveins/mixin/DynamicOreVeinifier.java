@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Random;
 
 @Mixin(NoiseChunk.class)
-public abstract class DynamicOreVeinifier {
+public class DynamicOreVeinifier {
 
     @Redirect(
         method = "<init>",
