@@ -13,7 +13,7 @@ import net.minecraft.world.level.levelgen.*;
 import net.thebrewingminer.dynamicoreveins.accessor.*;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
-import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
+import net.thebrewingminer.dynamicoreveins.helper.inThresholdHelper;
 import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.FlattenConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
@@ -90,12 +90,6 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private static boolean inThreshold(DensityFunction function, double min, double max, IVeinCondition.Context veinContext) {
-        DensityFunctionThreshold tempThreshold = new DensityFunctionThreshold(function, min, max);
-        return tempThreshold.test(veinContext);
-    }
-
-    @Unique
     private static BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, LevelHeightAccessor heightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
@@ -131,8 +125,8 @@ public class DynamicOreVeinifier {
             localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
-            if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
-//            System.out.println("Passed toggle");
+            if (!inThresholdHelper.inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
+            System.out.println("Passed toggle");
 
             if (veinConfig.conditions.test(veinContext)){
 //                System.out.println("Testing conditions");
