@@ -58,7 +58,7 @@ public class DynamicOreVeinifier {
             long seed = wgContext.getSeed();
             boolean useLegacyRandomSource = noiseGeneratorSettings.useLegacyRandomSource();
             RandomState randomState = ((ISettingsAccessor) noiseChunk).getRandomState();
-            System.out.println("[DOV] Retrieved RandomState from wgContext: " + randomState);
+//            System.out.println("[DOV] Retrieved RandomState from wgContext: " + randomState);
 
             // Final fallback: use the static WorldgenContextCache
             if ((chunkGenerator == null || heightAccessor == null) && currDimension != null) {
@@ -84,7 +84,7 @@ public class DynamicOreVeinifier {
 
 
 
-            return selectVein(noiseChunk, functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList, heightAccessor, chunkGenerator, currDimension, seed, useLegacyRandomSource, randomState, randomFactory);
+            return selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList, heightAccessor, chunkGenerator, currDimension, seed, useLegacyRandomSource, randomState, randomFactory);
         };
     }
 
@@ -95,7 +95,7 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private static BlockState selectVein(NoiseChunk noiseChunk, DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, LevelHeightAccessor heightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
+    private static BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, LevelHeightAccessor heightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
@@ -125,9 +125,9 @@ public class DynamicOreVeinifier {
             if (!veinConfig.dimension.contains(currDimension)) continue;
 //            System.out.println("Checked dimension.");
             /* Use configured vein toggle and shaping DFs if specified */
-            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
-            localVeinRidged = (veinConfig.veinRidged.function() != null ?veinConfig.veinRidged.function() : routerVeinRidged);
-            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function() : routerVeinGap);
+            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinToggle);
+            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinRidged);
+            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
             if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
@@ -209,7 +209,7 @@ public class DynamicOreVeinifier {
         if (relativeToMinY >= 0 && relativeToMaxY >= 0){
             int relativeToVeinBoundary = Math.min(relativeToMinY, relativeToMaxY);
             double boundClamped = Mth.clampedMap(relativeToVeinBoundary, 0.0, settings.edgeRoundOffBegin(), -settings.maxEdgeRoundOff(), 0.0);
-            System.out.println("Toggle value = " + toggleValue);
+//            System.out.println("Toggle value = " + toggleValue);
 //            System.out.printf("Toggle strength: %.4f | Bound clamped: %.4f | Sum: %.4f | Min threshold: %.4f\n", toggleStrength, boundClamped, (toggleStrength + boundClamped), settings.minRichnessThreshold());
 //            System.out.println("Settings from config: " + config.veinSettings);
             if((toggleStrength + boundClamped) < settings.minRichnessThreshold()){

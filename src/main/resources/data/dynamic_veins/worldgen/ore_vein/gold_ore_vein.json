@@ -52,9 +52,6 @@
             "type": "dynamic_veins:any_of",
             "conditions": [
                 {
-                    "type": "dynamic_veins:always_true"
-                },
-                {
                     "type": "minecraft:height_range",
                     "min_inclusive": {
                         "absolute": 72

@@ -2,7 +2,6 @@ package net.thebrewingminer.dynamicoreveins.codec.condition;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import net.minecraft.world.level.levelgen.DensityFunctions;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
@@ -15,20 +14,27 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public record DensityFunctionThreshold(@Nullable DensityFunction function, double minThreshold, double maxThreshold) implements IVeinCondition{
+public class DensityFunctionThreshold implements IVeinCondition{
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
+    protected final double minThreshold;
+    protected final double maxThreshold;
+    protected final DensityFunction function;
+    protected DensityFunction wiredFunction = null;
 
-    public DensityFunctionThreshold {
+    public DensityFunctionThreshold(@Nullable DensityFunction function, double minThreshold, double maxThreshold){
         if (minThreshold > maxThreshold){
             throw new IllegalArgumentException("Minimum threshold (" + minThreshold + ") cannot be greater than maximum threshold (" + maxThreshold + ").");
         }
+        this.function = function;
+        this.minThreshold = minThreshold;
+        this.maxThreshold = maxThreshold;
     }
 
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(DensityFunctionThreshold::function),
-            Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.NEGATIVE_INFINITY).forGetter(DensityFunctionThreshold::minThreshold),
-            Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.POSITIVE_INFINITY).forGetter(DensityFunctionThreshold::maxThreshold)
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(config -> config.function),
+            Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.NEGATIVE_INFINITY).forGetter(config -> config.minThreshold),
+            Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.POSITIVE_INFINITY).forGetter(config -> config.maxThreshold)
     ).apply(instance, DensityFunctionThreshold::new));
 
     public static final Codec<DensityFunctionThreshold> CODEC = Codec.either(
@@ -41,6 +47,17 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
             ),
             Either::right
     );
+
+    public double computeValue(DensityFunction densityFunction, Context context){
+        int x = context.pos().getX();
+        int y = context.pos().getY();
+        int z = context.pos().getZ();
+        return (densityFunction.compute(new DensityFunction.SinglePointContext(x, y, z)));
+    }
+
+    public DensityFunction function(){ return function; }
+    public double minThreshold(){ return minThreshold; }
+    public double maxThreshold(){ return maxThreshold; }
 
     @Override
     public String type(){
@@ -55,13 +72,11 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
             throw new IllegalStateException("Density function in condition should not be null");
         }
 
-        int posX = context.pos().getX();
-        int posY = context.pos().getY();
-        int posZ = context.pos().getZ();
+        if(wiredFunction == null){
+            wiredFunction = this.function.mapAll(new NoiseWiringHelper(context.seed(), context.useLegacyRandomSource(), context.randomState(), context.randomFactory()));
+        }
 
-        DensityFunction function = this.function.mapAll(new NoiseWiringHelper(context.seed(), context.useLegacyRandomSource(), context.randomState(), context.randomFactory()));
-
-        double value = function.compute(new DensityFunction.SinglePointContext(posX, posY, posZ));
+        double value = computeValue(wiredFunction, context);
         return (value >= minThreshold && value <= maxThreshold);
     }
 
@@ -81,7 +96,7 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
         final RandomState randomState;
         final PositionalRandomFactory randomFactory;
 
-        NoiseWiringHelper(long seed, boolean useLegacySource, RandomState randomState, PositionalRandomFactory randomFactory){
+        public NoiseWiringHelper(long seed, boolean useLegacySource, RandomState randomState, PositionalRandomFactory randomFactory){
             this.seed = seed;
             this.useLegacySource = useLegacySource;
             this.randomState = randomState;
@@ -92,10 +107,12 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
             return new LegacyRandomSource(seed + noiseSeed);
         }
 
-
         public DensityFunction.NoiseHolder visitNoise(DensityFunction.NoiseHolder noiseHolder){
             Holder<NormalNoise.NoiseParameters> data = noiseHolder.noiseData();
             NormalNoise noise;
+
+//            System.out.println("Rebinding noise: " + data.unwrapKey().orElse(null));
+
             if (this.useLegacySource){
                 if (data.is(Noises.TEMPERATURE)){
                     noise = NormalNoise.createLegacyNetherBiome(this.newLegacyInstance(0L),  new NormalNoise.NoiseParameters(-7, 1.0, new double[]{1.0}));
@@ -114,6 +131,10 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
             }
 
             noise = this.randomState.getOrCreateNoise(data.unwrapKey().orElseThrow());
+            NormalNoise resolved = randomState.getOrCreateNoise(data.unwrapKey().orElseThrow());
+//            System.out.println("[WIRING] For key " + data.unwrapKey().get().location() + ", resolved = " + resolved);
+//            System.out.println("[WIRING] Instance noise: " + (resolved == null ? "NULL" : "OK"));
+
             return new DensityFunction.NoiseHolder(data, noise);
         }
 
@@ -121,12 +142,7 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
             if (function instanceof BlendedNoise blendedNoise){
                 RandomSource source = this.useLegacySource ? this.newLegacyInstance(0L) : this.randomFactory.fromHashOf(new ResourceLocation("terrain"));
                 return blendedNoise.withNewRandom(source);
-            } else {
-//                return ((function instanceof DensityFunctions) ? DensityFunctions.endIslands(this.seed) : function);
-                if (function.codec() == DensityFunctions.endIslands(0).codec()){
-                    return DensityFunctions.endIslands(this.seed);
-                } else return function;
-            }
+            } else return function;
         }
 
         @Override
