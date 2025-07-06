@@ -8,6 +8,7 @@
     "ChunkGeneratorMixin",
     "NoiseBasedChunkGeneratorMixin",
     "NoiseChunkMixin",
+    "IRandomStateAccessor",
     "ServerLevelMixin",
     "NoiseGeneratorSettingsMixin",
     "DynamicOreVeinifier"

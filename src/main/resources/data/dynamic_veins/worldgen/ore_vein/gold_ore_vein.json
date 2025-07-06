@@ -4,17 +4,84 @@
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:granite",
     "vein_toggle": {
-        "max_threshold": 0.0
+        "input": {
+            "type": "minecraft:interpolated",
+            "argument": {
+                "type": "minecraft:noise",
+                "noise": "minecraft:ore_veininess",
+                "xz_scale": 1.5,
+                "y_scale": 1.5
+            }
+        }
+    },
+    "vein_ridged": {
+        "input": {
+            "type": "minecraft:add",
+            "argument1": -0.07999999821186066,
+            "argument2": {
+                "type": "minecraft:max",
+                "argument1": {
+                    "type": "minecraft:abs",
+                    "argument": {
+                        "type": "minecraft:interpolated",
+                        "argument": {
+                            "type": "minecraft:noise",
+                            "noise": "minecraft:ore_vein_a",
+                            "xz_scale": 4,
+                            "y_scale": 4
+                        }
+                    }
+                },
+                "argument2": {
+                    "type": "minecraft:abs",
+                    "argument": {
+                        "type": "minecraft:interpolated",
+                        "argument": {
+                            "type": "minecraft:noise",
+                            "noise": "minecraft:ore_vein_b",
+                            "xz_scale": 4,
+                            "y_scale": 4
+                        }
+                    }
+                }
+            }
+        }
     },
     "conditions": [
         {
-            "type": "minecraft:height_range",
-            "min_inclusive": {
-                "absolute": -60
-            },
-            "max_inclusive": {
-                "absolute": -8
-            }
+            "type": "dynamic_veins:any_of",
+            "conditions": [
+                {
+                    "type": "dynamic_veins:always_true"
+                },
+                {
+                    "type": "minecraft:height_range",
+                    "min_inclusive": {
+                        "absolute": 72
+                    },
+                    "max_inclusive": {
+                        "absolute": 78
+                    }
+                },
+                {
+                    "type": "minecraft:height_range",
+                    "min_inclusive": {
+                        "absolute": 80
+                    },
+                    "max_inclusive": {
+                        "absolute": 85
+                    }
+                },
+                {
+                    "type": "minecraft:height_range",
+                    "min_inclusive": {
+                        "absolute": 87
+                    },
+                    "max_inclusive": {
+                        "absolute": 95
+                    }
+                }
+            ]
         }
     ]
 }

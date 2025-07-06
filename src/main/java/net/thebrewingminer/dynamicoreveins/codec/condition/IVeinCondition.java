@@ -5,6 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.PositionalRandomFactory;
+import net.minecraft.world.level.levelgen.RandomState;
 
 public interface IVeinCondition {
     boolean test(Context context);
@@ -14,6 +16,9 @@ public interface IVeinCondition {
         BlockPos pos();
         LevelHeightAccessor heightAccessor();
         ChunkGenerator chunkGenerator();
-        double compute(DensityFunction function);
+        long seed();
+        boolean useLegacyRandomSource();
+        RandomState randomState();
+        PositionalRandomFactory randomFactory();
     }
 }

@@ -10,14 +10,11 @@ import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.*;
-import net.thebrewingminer.dynamicoreveins.accessor.HeightRangeWrapper;
-import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
-import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
-import net.thebrewingminer.dynamicoreveins.accessor.WorldgenContextCache;
+import net.thebrewingminer.dynamicoreveins.accessor.*;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
-import net.thebrewingminer.dynamicoreveins.codec.condition.FlattenConditions;
+import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.FlattenConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
@@ -58,6 +55,10 @@ public class DynamicOreVeinifier {
             ChunkGenerator chunkGenerator = wgContext.getChunkGenerator();
             LevelHeightAccessor heightAccessor = wgContext.getHeightAccessor();
             ResourceKey<Level> currDimension = wgContext.getDimension();
+            long seed = wgContext.getSeed();
+            boolean useLegacyRandomSource = noiseGeneratorSettings.useLegacyRandomSource();
+            RandomState randomState = ((ISettingsAccessor) noiseChunk).getRandomState();
+            System.out.println("[DOV] Retrieved RandomState from wgContext: " + randomState);
 
             // Final fallback: use the static WorldgenContextCache
             if ((chunkGenerator == null || heightAccessor == null) && currDimension != null) {
@@ -80,7 +81,10 @@ public class DynamicOreVeinifier {
                 System.err.println("-------------------------------------------------------------------------------------------------------");
                 return null;
             }
-            return selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList, heightAccessor, chunkGenerator, currDimension, randomFactory);
+
+
+
+            return selectVein(noiseChunk, functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList, heightAccessor, chunkGenerator, currDimension, seed, useLegacyRandomSource, randomState, randomFactory);
         };
     }
 
@@ -91,14 +95,17 @@ public class DynamicOreVeinifier {
     }
 
     @Unique
-    private static BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, LevelHeightAccessor heightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, PositionalRandomFactory randomFactory){
+    private static BlockState selectVein(NoiseChunk noiseChunk, DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, LevelHeightAccessor heightAccessor, ChunkGenerator chunkGenerator, ResourceKey<Level> currDimension, long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
         BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
         IVeinCondition.Context veinContext = new IVeinCondition.Context() {
             @Override public BlockPos pos() { return pos;}
             @Override public LevelHeightAccessor heightAccessor() { return heightAccessor; }
             @Override public ChunkGenerator chunkGenerator() { return chunkGenerator; }
-            @Override public double compute(DensityFunction function) { return function.compute(functionContext); }
+            @Override public long seed() { return seed; }
+            @Override public boolean useLegacyRandomSource() { return useLegacyRandomSource; }
+            @Override public RandomState randomState() { return randomState; }
+            @Override public PositionalRandomFactory randomFactory() { return randomFactory; }
         };
 
         DensityFunction veinToggle = routerVeinToggle;
@@ -115,11 +122,11 @@ public class DynamicOreVeinifier {
             /* Check if in suitable dimension. */
 //            System.out.println("Testing config in dimension: " + currDimension.location());
 //            System.out.println("Config's allowed dimensions: " + veinConfig.dimension);
-            if (!veinConfig.dimension.contains(Level.OVERWORLD)) continue;
+            if (!veinConfig.dimension.contains(currDimension)) continue;
 //            System.out.println("Checked dimension.");
             /* Use configured vein toggle and shaping DFs if specified */
             localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function() : routerVeinToggle);
-            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function() : routerVeinRidged);
+            localVeinRidged = (veinConfig.veinRidged.function() != null ?veinConfig.veinRidged.function() : routerVeinRidged);
             localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function() : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
@@ -127,6 +134,7 @@ public class DynamicOreVeinifier {
 //            System.out.println("Passed toggle");
 
             if (veinConfig.conditions.test(veinContext)){
+//                System.out.println("Testing conditions");
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
                 veinRidged = localVeinRidged;
@@ -141,6 +149,7 @@ public class DynamicOreVeinifier {
         List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions);
 //        System.out.println("Calling findMatchingHeightRange!!");
         HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
+//        System.out.println("Found: " + heightRange.min_y() + " and " + heightRange.max_y());
 //        System.out.println("Calling dynamicOreVeinifier!");
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange, randomFactory);
     }
@@ -200,12 +209,18 @@ public class DynamicOreVeinifier {
         if (relativeToMinY >= 0 && relativeToMaxY >= 0){
             int relativeToVeinBoundary = Math.min(relativeToMinY, relativeToMaxY);
             double boundClamped = Mth.clampedMap(relativeToVeinBoundary, 0.0, settings.edgeRoundOffBegin(), -settings.maxEdgeRoundOff(), 0.0);
+            System.out.println("Toggle value = " + toggleValue);
+//            System.out.printf("Toggle strength: %.4f | Bound clamped: %.4f | Sum: %.4f | Min threshold: %.4f\n", toggleStrength, boundClamped, (toggleStrength + boundClamped), settings.minRichnessThreshold());
+//            System.out.println("Settings from config: " + config.veinSettings);
             if((toggleStrength + boundClamped) < settings.minRichnessThreshold()){
+//                System.out.println("Lower than minRichnessThreshold.");
                 return toReturn;
             } else {
                 if(seededRandom.nextFloat() > settings.veinSolidness()){
+//                    System.out.println("Random float is larger than vein_solidness.");
                     return toReturn;
                 } else if (veinRidged.compute(functionContext) >= 0.0){
+//                    System.out.println("Vein ridged is negative!");
                     return toReturn;
                 } else {
                     double richness = Mth.clampedMap(toggleStrength, settings.minRichnessThreshold(), settings.maxRichnessThreshold(), settings.minRichness(), settings.maxRichness());

@@ -32,6 +32,11 @@ public class NoiseBasedChunkGeneratorMixin implements ISettingsAccessor {
         return this.settings;
     }
 
+    @Override
+    public RandomState getRandomState() {
+        return null;
+    }
+
 
     @Inject(
             method = "createNoiseChunk(Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/world/level/StructureManager;Lnet/minecraft/world/level/levelgen/blending/Blender;Lnet/minecraft/world/level/levelgen/RandomState;)Lnet/minecraft/world/level/levelgen/NoiseChunk;",
