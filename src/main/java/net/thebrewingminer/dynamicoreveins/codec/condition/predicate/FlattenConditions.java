@@ -1,8 +1,6 @@
 package net.thebrewingminer.dynamicoreveins.codec.condition.predicate;
 
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
-import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AllConditions;
-import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.AnyConditions;
 
 import java.util.ArrayList;
 import java.util.List;

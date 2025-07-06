@@ -75,7 +75,7 @@ public record DensityFunctionThreshold(@Nullable DensityFunction function, doubl
     *   method to implement this.
     */
     public static class NoiseWiringHelper implements DensityFunction.Visitor{
-        private final Map<DensityFunction, DensityFunction> wrapped = new HashMap();
+        private final Map<DensityFunction, DensityFunction> wrapped = new HashMap<>();
         private final long seed;
         private final boolean useLegacySource;
         final RandomState randomState;
