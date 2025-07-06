@@ -17,6 +17,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThresh
 import net.thebrewingminer.dynamicoreveins.codec.condition.predicate.FlattenConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
+import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -125,9 +126,9 @@ public class DynamicOreVeinifier {
             if (!veinConfig.dimension.contains(currDimension)) continue;
 //            System.out.println("Checked dimension.");
             /* Use configured vein toggle and shaping DFs if specified */
-            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinToggle);
-            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinRidged);
-            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinGap);
+            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinToggle);
+            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinRidged);
+            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
             if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
