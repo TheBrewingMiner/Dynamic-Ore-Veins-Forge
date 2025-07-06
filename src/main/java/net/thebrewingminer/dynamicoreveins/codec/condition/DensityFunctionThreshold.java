@@ -73,7 +73,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
         }
 
         if(wiredFunction == null){
-            wiredFunction = this.function.mapAll(new NoiseWiringHelper(context.seed(), context.useLegacyRandomSource(), context.randomState(), context.randomFactory()));
+            wiredFunction = this.function.mapAll(new NoiseWiringHelper(context));
         }
 
         double value = computeValue(wiredFunction, context);
@@ -92,15 +92,15 @@ public class DensityFunctionThreshold implements IVeinCondition{
     public static class NoiseWiringHelper implements DensityFunction.Visitor{
         private final Map<DensityFunction, DensityFunction> wrapped = new HashMap<>();
         private final long seed;
-        private final boolean useLegacySource;
+        private final boolean useLegacyRandomSource;
         final RandomState randomState;
         final PositionalRandomFactory randomFactory;
 
-        public NoiseWiringHelper(long seed, boolean useLegacySource, RandomState randomState, PositionalRandomFactory randomFactory){
-            this.seed = seed;
-            this.useLegacySource = useLegacySource;
-            this.randomState = randomState;
-            this.randomFactory = randomFactory;
+        public NoiseWiringHelper(Context context){
+            this.seed = context.seed();
+            this.useLegacyRandomSource = context.useLegacyRandomSource();
+            this.randomState = context.randomState();
+            this.randomFactory = context.randomFactory();
         }
 
         private RandomSource newLegacyInstance(long noiseSeed) {
@@ -113,7 +113,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
 
 //            System.out.println("Rebinding noise: " + data.unwrapKey().orElse(null));
 
-            if (this.useLegacySource){
+            if (this.useLegacyRandomSource){
                 if (data.is(Noises.TEMPERATURE)){
                     noise = NormalNoise.createLegacyNetherBiome(this.newLegacyInstance(0L),  new NormalNoise.NoiseParameters(-7, 1.0, new double[]{1.0}));
                     return new DensityFunction.NoiseHolder(data, noise);
@@ -140,7 +140,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
 
         private DensityFunction wrapNew(DensityFunction function){
             if (function instanceof BlendedNoise blendedNoise){
-                RandomSource source = this.useLegacySource ? this.newLegacyInstance(0L) : this.randomFactory.fromHashOf(new ResourceLocation("terrain"));
+                RandomSource source = this.useLegacyRandomSource ? this.newLegacyInstance(0L) : this.randomFactory.fromHashOf(new ResourceLocation("terrain"));
                 return blendedNoise.withNewRandom(source);
             } else return function;
         }

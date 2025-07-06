@@ -125,9 +125,9 @@ public class DynamicOreVeinifier {
             if (!veinConfig.dimension.contains(currDimension)) continue;
 //            System.out.println("Checked dimension.");
             /* Use configured vein toggle and shaping DFs if specified */
-            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinToggle);
-            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinRidged);
-            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext.seed(), veinContext.useLegacyRandomSource(), veinContext.randomState(), veinContext.randomFactory())) : routerVeinGap);
+            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinToggle);
+            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinRidged);
+            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new DensityFunctionThreshold.NoiseWiringHelper(veinContext)) : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
             if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
