@@ -15,7 +15,6 @@ public class InThresholdHelper {
         int y = veinContext.pos().getY();
         int z = veinContext.pos().getZ();
         double value = function.compute(new DensityFunction.SinglePointContext(x, y, z));
-        System.out.println(value);
         return (value >= min && value <= max);
     }
 }

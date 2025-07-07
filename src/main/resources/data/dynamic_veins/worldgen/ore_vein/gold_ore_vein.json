@@ -3,6 +3,10 @@
     "secondary_ore": "minecraft:raw_gold_block",
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:granite",
+    "dimension": [
+        "minecraft:overworld",
+        "minecraft:the_nether"
+    ],
     "vein_toggle": {
         "input": {
             "type": "minecraft:interpolated",
@@ -47,6 +51,11 @@
             }
         }
     },
+    "vein_gap": {},
+    "vein_settings": {
+        "min_richness_threshold": -1.0,
+        "vein_solidness": 1.0
+    },
     "conditions": [
         {
             "type": "dynamic_veins:any_of",
@@ -63,7 +72,7 @@
                 {
                     "type": "minecraft:height_range",
                     "min_inclusive": {
-                        "absolute": 80
+                        "absolute": 83
                     },
                     "max_inclusive": {
                         "absolute": 85
@@ -72,7 +81,7 @@
                 {
                     "type": "minecraft:height_range",
                     "min_inclusive": {
-                        "absolute": 87
+                        "absolute": 90
                     },
                     "max_inclusive": {
                         "absolute": 95
