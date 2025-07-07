@@ -53,18 +53,8 @@ public class CreateVein {
             long seed = wgContext.getSeed();
             boolean useLegacyRandomSource = noiseGeneratorSettings.useLegacyRandomSource();
             RandomState randomState = ((ISettingsAccessor) noiseChunk).getRandomState();
-//            System.out.println("[DOV] Retrieved RandomState from wgContext: " + randomState);
 
-            // Final fallback: use the static WorldgenContextCache
-            if ((chunkGenerator == null || heightAccessor == null) && currDimension != null) {
-                WorldgenContextCache.WGContext fallback = WorldgenContextCache.getContext(currDimension);
-                if (fallback != null) {
-                    if (chunkGenerator == null) chunkGenerator = fallback.generator();
-                    if (heightAccessor == null) heightAccessor = fallback.heightAccessor();
-                }
-            }
-
-//          If still missing required info, log once and return null
+//          If missing required info, log once and return null
             if (currDimension == null || chunkGenerator == null || heightAccessor == null) {
                 System.err.println("-------------------------------------------------------------------------------------------------------");
                 System.err.println("[DOV] Warning: Worldgen context missing during BlockStateFiller evaluation. Skipping vein placement.");
