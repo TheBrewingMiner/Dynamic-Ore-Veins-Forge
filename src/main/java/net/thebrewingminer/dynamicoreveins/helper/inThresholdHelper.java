@@ -4,7 +4,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 
 public class inThresholdHelper {
-    public inThresholdHelper(){}
+    private inThresholdHelper(){}
 
     // Practically a repeat of logic in DensityFunctionThreshold. This is used to compute a function that is known to
     // be wired to its noises already. It removes the need to create new DensityFunctionThreshold objects and without
