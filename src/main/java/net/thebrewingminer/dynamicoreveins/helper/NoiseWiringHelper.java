@@ -62,7 +62,7 @@ public class NoiseWiringHelper implements DensityFunction.Visitor{
         if (function instanceof BlendedNoise blendedNoise){
             RandomSource source = this.useLegacyRandomSource ? this.newLegacyInstance(0L) : this.randomFactory.fromHashOf(new ResourceLocation("terrain"));
             return blendedNoise.withNewRandom(source);
-        } else return function;
+        } else return (function instanceof DensityFunctions.EndIslandDensityFunction ? new DensityFunctions.EndIslandDensityFunction(this.seed) : function);
     }
 
     @Override
