@@ -3,17 +3,10 @@ package net.thebrewingminer.dynamicoreveins.codec.condition;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.levelgen.*;
-import net.minecraft.world.level.levelgen.synth.BlendedNoise;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class DensityFunctionThreshold implements IVeinCondition{
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
@@ -70,7 +63,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
         if (!(context.chunkGenerator() instanceof NoiseBasedChunkGenerator)) return false;
 
         if(this.function == null){
-            throw new IllegalStateException("Density function in condition should not be null");
+            throw new IllegalStateException("Density function in condition should not be null.");
         }
 
         if(wiredFunction == null){
