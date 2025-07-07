@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Random;
 
 import static net.thebrewingminer.dynamicoreveins.helper.FindMatchingHeightRange.findMatchingHeightRange;
-import static net.thebrewingminer.dynamicoreveins.helper.inThresholdHelper.inThreshold;
+import static net.thebrewingminer.dynamicoreveins.helper.InThresholdHelper.inThreshold;
 
 @Mixin(NoiseChunk.class)
 public class DynamicOreVeinifier {
