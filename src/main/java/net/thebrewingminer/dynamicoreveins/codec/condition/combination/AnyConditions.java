@@ -1,4 +1,4 @@
-package net.thebrewingminer.dynamicoreveins.codec.condition.predicate;
+package net.thebrewingminer.dynamicoreveins.codec.condition.combination;
 
 import com.mojang.serialization.Codec;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
