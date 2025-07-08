@@ -49,6 +49,10 @@ public class DensityFunctionThreshold implements IVeinCondition{
         return (densityFunction.compute(new DensityFunction.SinglePointContext(x, y, z)));
     }
 
+    public static DensityFunctionThreshold createDefault(){
+        return new DensityFunctionThreshold(null, DEFAULT_MIN_THRESHOLD, DEFAULT_MAX_THRESHOLD);
+    }
+
     public DensityFunction function(){ return function; }
     public double minThreshold(){ return minThreshold; }
     public double maxThreshold(){ return maxThreshold; }
