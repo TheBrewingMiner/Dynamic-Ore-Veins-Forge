@@ -9,7 +9,9 @@ import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.*;
 import net.thebrewingminer.dynamicoreveins.accessor.*;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
+import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
+import net.thebrewingminer.dynamicoreveins.registry.VeinSettingsConfigLoader;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -33,6 +35,11 @@ public class CreateVein {
         )
     )
     private NoiseChunk.BlockStateFiller createVein(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
+        VeinSettingsConfig config = VeinSettingsConfigLoader.get();
+        if (config.vanillaVeinsEnabled()) {
+            // enable logic
+        }
+
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
         if(veinRegistry.size() == 0) { return ((functionContext) -> null); }                // If registry is empty by now, don't do anything else. Return like nothing happened.
         List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());

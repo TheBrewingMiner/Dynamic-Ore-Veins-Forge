@@ -51,17 +51,17 @@ public class DynamicOreVeinifier {
             DensityFunction localVeinGap;
 
             /* Check if in suitable dimension. */
-            if (!veinConfig.dimension.contains(currDimension)) continue;
+            if (!veinConfig.dimension().contains(currDimension)) continue;
 
             /* Use configured vein toggle and shaping DFs if specified */
-            localVeinToggle = (veinConfig.veinToggle.function() != null ? veinConfig.veinToggle.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinToggle);
-            localVeinRidged = (veinConfig.veinRidged.function() != null ? veinConfig.veinRidged.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinRidged);
-            localVeinGap = (veinConfig.veinGap.function() != null ? veinConfig.veinGap.function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinGap);
+            localVeinToggle = (veinConfig.veinToggle().function() != null ? veinConfig.veinToggle().function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinToggle);
+            localVeinRidged = (veinConfig.veinRidged().function() != null ? veinConfig.veinRidged().function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinRidged);
+            localVeinGap = (veinConfig.veinGap().function() != null ? veinConfig.veinGap().function().mapAll(new NoiseWiringHelper(veinContext)) : routerVeinGap);
 
             /* Calculate if in toggle's and shaping DFs' threshold */
-            if (!inThreshold(localVeinToggle, veinConfig.veinToggle.minThreshold(), veinConfig.veinToggle.maxThreshold(), veinContext)) continue;
+            if (!inThreshold(localVeinToggle, veinConfig.veinToggle().minThreshold(), veinConfig.veinToggle().maxThreshold(), veinContext)) continue;
 
-            if (veinConfig.conditions.test(veinContext)){
+            if (veinConfig.conditions().test(veinContext)){
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
                 veinRidged = localVeinRidged;
@@ -71,7 +71,7 @@ public class DynamicOreVeinifier {
         }
 
         if (selectedConfig == null) return null;
-        List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions);
+        List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions());
         HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
@@ -79,11 +79,11 @@ public class DynamicOreVeinifier {
     public static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinToggle, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig config, IVeinCondition.Context veinContext, HeightRangeWrapper heightRange){
         RandomSource seededRandom = veinContext.randomFactory().at(veinContext.pos());
 
-        BlockState ore = config.ore.getState(seededRandom, veinContext.pos());
-        BlockState secondaryOre = config.secondary_ore.getState(seededRandom, veinContext.pos());
-        BlockState fillerBlock = config.fillerBlock.getState(seededRandom, veinContext.pos());
-        float secondaryOreChance = config.secondary_ore_chance;
-        OreRichnessSettings settings = config.veinSettings;
+        BlockState ore = config.ore().getState(seededRandom, veinContext.pos());
+        BlockState secondaryOre = config.secondaryOre().getState(seededRandom, veinContext.pos());
+        BlockState fillerBlock = config.fillerBlock().getState(seededRandom, veinContext.pos());
+        float secondaryOreChance = config.secondaryOreChance();
+        OreRichnessSettings settings = config.veinSettings();
 
         BlockState empty = null;
 

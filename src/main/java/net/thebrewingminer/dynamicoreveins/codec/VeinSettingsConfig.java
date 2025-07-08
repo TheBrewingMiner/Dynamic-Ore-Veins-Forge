@@ -8,4 +8,8 @@ public record VeinSettingsConfig(boolean vanillaVeinsEnabled, boolean vanillaVei
             Codec.BOOL.fieldOf("vanilla_veins_enabled").orElse(true).forGetter(VeinSettingsConfig::vanillaVeinsEnabled),
             Codec.BOOL.fieldOf("vanilla_priority").orElse(true).forGetter(VeinSettingsConfig::vanillaVeinsPrioritized)
     ).apply(configInstance, VeinSettingsConfig::new));
+
+    public static VeinSettingsConfig createDefault(){
+        return new VeinSettingsConfig(true, true);
+    }
 }
