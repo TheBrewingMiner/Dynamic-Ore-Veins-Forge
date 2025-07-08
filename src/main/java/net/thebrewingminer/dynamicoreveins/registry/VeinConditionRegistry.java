@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class VeinConditionRegistry {
     public static final Map<String, Codec<? extends IVeinCondition>> REGISTRY = Map.of(
-            "minecraft:height_range", HeightRangeCondition.CODEC,
+            "dynamic_veins:height_range", HeightRangeCondition.CODEC,
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
             "dynamic_veins:any_of", AnyConditions.CODEC,
             "dynamic_veins:all_of", AllConditions.CODEC,

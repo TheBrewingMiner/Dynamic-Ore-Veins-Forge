@@ -13,7 +13,7 @@ public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor m
 
     @Override
     public String type(){
-        return "minecraft:height_range";
+        return "dynamic_veins:height_range";
     }
 
     @Override
