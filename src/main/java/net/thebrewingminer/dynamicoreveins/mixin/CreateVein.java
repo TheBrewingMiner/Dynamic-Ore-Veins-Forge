@@ -10,6 +10,7 @@ import net.minecraft.world.level.levelgen.*;
 import net.thebrewingminer.dynamicoreveins.accessor.*;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
+import net.thebrewingminer.dynamicoreveins.main.DefaultVanillaVein;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 import net.thebrewingminer.dynamicoreveins.registry.VeinSettingsConfigLoader;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,18 +37,33 @@ public class CreateVein {
     )
     private NoiseChunk.BlockStateFiller createVein(DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, PositionalRandomFactory randomFactory){
         VeinSettingsConfig config = VeinSettingsConfigLoader.get();
-        if (config.vanillaVeinsEnabled()) {
-            // enable logic
-        }
+        OreVeinConfig IRON_VEIN = DefaultVanillaVein.ironVein();
+        OreVeinConfig COPPER_VEIN = DefaultVanillaVein.copperVein();
+        List<OreVeinConfig> veinRegistryList;
+        List<OreVeinConfig> veinList = new ArrayList<>();
 
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
-        if(veinRegistry.size() == 0) { return ((functionContext) -> null); }                // If registry is empty by now, don't do anything else. Return like nothing happened.
-        List<OreVeinConfig> veinList = new ArrayList<>(veinRegistry.stream().toList());
-        List<OreVeinConfig> shufflingList = new ArrayList<>(veinList);                      // Copy just to be sure original list does not get mutated
-                                                                                            // in case of future use.
+        veinRegistryList = new ArrayList<>(veinRegistry.stream().toList());
+
         long PLACE_HOLDER_SEED = 1;
         Random random = new Random(PLACE_HOLDER_SEED);
-        Collections.shuffle(shufflingList, random);
+
+        if (config.vanillaVeinsEnabled()){
+            veinList.add(IRON_VEIN);
+            veinList.add(COPPER_VEIN);
+            if (config.vanillaVeinsPrioritized()){
+                Collections.shuffle(veinRegistryList, random);
+                veinList.addAll(veinRegistryList);
+            } else {
+                veinList.addAll(veinRegistryList);
+                Collections.shuffle(veinList, random);
+            }
+        } else {
+            Collections.shuffle(veinRegistryList, random);
+            veinList.addAll(veinRegistryList);
+        }
+
+        if (veinList.isEmpty()) { return ((functionContext) -> null); }
 
         return (functionContext) -> {
             NoiseChunk noiseChunk = (NoiseChunk)(Object)this;
@@ -74,7 +90,7 @@ public class CreateVein {
                 return null;
             }
 
-            return selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, shufflingList, heightAccessor, chunkGenerator, currDimension, seed, useLegacyRandomSource, randomState, randomFactory);
+            return selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, veinList, heightAccessor, chunkGenerator, currDimension, seed, useLegacyRandomSource, randomState, randomFactory);
         };
     }
 }

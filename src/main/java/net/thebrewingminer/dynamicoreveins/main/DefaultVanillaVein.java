@@ -14,7 +14,7 @@ import java.util.Collections;
 public class DefaultVanillaVein {
     private DefaultVanillaVein(){}
 
-    protected OreVeinConfig IRON_VEIN = new OreVeinConfig(
+    protected static OreVeinConfig IRON_VEIN = new OreVeinConfig(
         BlockStateProvider.simple(Blocks.DEEPSLATE_IRON_ORE),
         BlockStateProvider.simple(Blocks.RAW_IRON_BLOCK),
     0.02f,
@@ -27,7 +27,7 @@ public class DefaultVanillaVein {
         new HeightRangeCondition(VerticalAnchor.absolute(-60), VerticalAnchor.absolute(-8))
     );
 
-    protected OreVeinConfig COPPER_VEIN = new OreVeinConfig(
+    protected static OreVeinConfig COPPER_VEIN = new OreVeinConfig(
             BlockStateProvider.simple(Blocks.COPPER_ORE),
             BlockStateProvider.simple(Blocks.RAW_COPPER_BLOCK),
             0.02f,
@@ -40,11 +40,11 @@ public class DefaultVanillaVein {
             new HeightRangeCondition(VerticalAnchor.absolute(0), VerticalAnchor.absolute(50))
     );
 
-    public OreVeinConfig ironVein(){
+    public static OreVeinConfig ironVein(){
         return IRON_VEIN;
     }
 
-    public OreVeinConfig copperVein(){
+    public static OreVeinConfig copperVein(){
         return COPPER_VEIN;
     }
 }
