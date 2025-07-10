@@ -9,7 +9,7 @@ import net.minecraft.world.level.levelgen.RandomState;
 
 public interface IVeinCondition {
     boolean test(Context context);
-    Codec<? extends IVeinCondition> codec();
+//    Codec<? extends IVeinCondition> codec();
     String type();
     interface Context {
         BlockPos pos();

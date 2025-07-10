@@ -17,10 +17,10 @@ public class AnyConditions extends CombiningCondition {
         return conditions.stream().anyMatch(c -> c.test(context));
     }
 
-    @Override
-    public Codec<? extends IVeinCondition> codec(){
-        return CODEC;
-    }
+//    @Override
+//    public Codec<? extends IVeinCondition> codec(){
+//        return CODEC;
+//    }
 
     @Override
     public String type(){

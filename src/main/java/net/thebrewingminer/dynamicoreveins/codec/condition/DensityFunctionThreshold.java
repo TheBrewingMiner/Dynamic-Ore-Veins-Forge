@@ -78,8 +78,8 @@ public class DensityFunctionThreshold implements IVeinCondition{
         return (value >= minThreshold && value <= maxThreshold);
     }
 
-    @Override
-    public Codec<? extends IVeinCondition> codec(){
-        return CODEC;
-    }
+//    @Override
+//    public Codec<? extends IVeinCondition> codec(){
+//        return CODEC;
+//    }
 }

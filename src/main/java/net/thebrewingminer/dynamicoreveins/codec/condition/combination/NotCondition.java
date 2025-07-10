@@ -5,16 +5,16 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 
 import java.util.List;
 
-public class AllConditions extends CombiningCondition {
-    public static final Codec<AllConditions> CODEC = CombiningCondition.codec(AllConditions::new);
+public class NotCondition extends CombiningCondition {
+    public static final Codec<NotCondition> CODEC = CombiningCondition.codec(NotCondition::new);
 
-    public AllConditions(List<IVeinCondition> conditions){
+    public NotCondition(List<IVeinCondition> conditions){
         super(conditions);
     }
 
     @Override
     public boolean test(Context context){
-        return conditions.stream().allMatch(c -> c.test(context));
+        return conditions.stream().noneMatch(c -> c.test(context));
     }
 
 //    @Override
@@ -23,7 +23,7 @@ public class AllConditions extends CombiningCondition {
 //    }
 
     @Override
-    public String type(){
-        return "dynamic_veins:all_of";
+    public String type() {
+        return "dynamic_veins:not";
     }
 }

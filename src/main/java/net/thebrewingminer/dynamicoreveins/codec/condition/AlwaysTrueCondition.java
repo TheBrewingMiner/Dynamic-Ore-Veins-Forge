@@ -10,10 +10,10 @@ public record AlwaysTrueCondition() implements IVeinCondition {
         return true;
     }
 
-    @Override
-    public Codec<? extends IVeinCondition> codec() {
-        return CODEC;
-    }
+//    @Override
+//    public Codec<? extends IVeinCondition> codec() {
+//        return CODEC;
+//    }
 
     @Override
     public String type() {

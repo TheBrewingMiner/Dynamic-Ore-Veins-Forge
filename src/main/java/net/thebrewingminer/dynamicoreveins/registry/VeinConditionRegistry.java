@@ -11,6 +11,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.combination.AllConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.combination.AnyConditions;
+import net.thebrewingminer.dynamicoreveins.codec.condition.combination.NotCondition;
 
 import java.util.Map;
 
@@ -20,7 +21,8 @@ public class VeinConditionRegistry {
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
             "dynamic_veins:any_of", AnyConditions.CODEC,
             "dynamic_veins:all_of", AllConditions.CODEC,
-            "dynamic_veins:always_true", AlwaysTrueCondition.CODEC
+            "dynamic_veins:always_true", AlwaysTrueCondition.CODEC,
+            "dynamic_veins:not", NotCondition.CODEC
     );
 
     private VeinConditionRegistry(){}
