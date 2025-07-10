@@ -13,8 +13,8 @@ public class FindMatchingHeightRange {
         WorldGenerationContext worldGenContext = new WorldGenerationContext(veinContext.chunkGenerator(), veinContext.heightAccessor());
         HeightRangeWrapper firstMatchingRange = null;
         int matchingRangeCounter = 0;
-        int DEFAULT_MIN_Y = -64;
-        int DEFAULT_MAX_Y = 320;
+        int DEFAULT_MIN_Y = worldGenContext.getMinGenY();
+        int DEFAULT_MAX_Y = DEFAULT_MIN_Y + worldGenContext.getGenDepth();
         int minOverlapY = Integer.MIN_VALUE;
         int maxOverlapY = Integer.MAX_VALUE;
         int y = veinContext.pos().getY();
