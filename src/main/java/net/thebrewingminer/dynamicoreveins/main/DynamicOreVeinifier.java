@@ -14,13 +14,13 @@ import net.minecraft.world.level.levelgen.RandomState;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
-import net.thebrewingminer.dynamicoreveins.helper.FlattenConditions;
 import net.thebrewingminer.dynamicoreveins.helper.HeightRangeWrapper;
 import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 
 import java.util.List;
 
 import static net.thebrewingminer.dynamicoreveins.helper.FindMatchingHeightRange.findMatchingHeightRange;
+import static net.thebrewingminer.dynamicoreveins.helper.FlattenConditions.flattenConditions;
 import static net.thebrewingminer.dynamicoreveins.helper.InThresholdHelper.inThreshold;
 
 public class DynamicOreVeinifier {
@@ -71,7 +71,7 @@ public class DynamicOreVeinifier {
         }
 
         if (selectedConfig == null) return null;
-        List<IVeinCondition> conditionsList = FlattenConditions.flattenConditions(selectedConfig.conditions());
+        List<IVeinCondition> conditionsList = flattenConditions(selectedConfig.conditions());
         HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
