@@ -19,9 +19,7 @@ public class RegistryInitEvent {
             System.out.println("[OreVeinRegistryHolder] Registry initialized on server start.");
 
             Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getRegistry();
-            System.out.println("Ore Vein Registry size: " + veinRegistry.size());
-            veinRegistry.stream().forEach(vein -> System.out.println("Loaded OreVeinConfig: " + vein));
-
+            System.out.println("[OreVeinRegistryHolder] Ore Vein Registry size: " + veinRegistry.size());
         }
     }
 }

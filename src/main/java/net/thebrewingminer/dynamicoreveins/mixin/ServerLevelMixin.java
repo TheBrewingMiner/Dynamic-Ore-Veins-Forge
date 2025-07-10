@@ -40,7 +40,6 @@ public class ServerLevelMixin {
         PositionalRandomFactory randomFactory = ((IRandomStateAccessor)(Object)randomState).randomFactory();
 
         WorldgenContextCache.setContext(pDimensionKey, chunkGenerator, heightAccessor);
-        System.out.println("Cached generator and height accessor for dimension: " + pDimensionKey.location());
 
         NoiseGeneratorSettings settings = ((ISettingsAccessor) chunkGenerator).getNoiseGenSettings();
 
@@ -51,7 +50,7 @@ public class ServerLevelMixin {
                 wgContext.setHeightAccessor(heightAccessor);
                 wgContext.setSeed(pSeed);
                 wgContext.setRandomState(randomState);
-                System.out.println("[DOV] Injected RandomState into NoiseGeneratorSettings: " + randomState);
+                System.out.println("[DynamicOreVeins] Injected RandomState into NoiseGeneratorSettings: " + randomState);
 
                 System.out.println("[DynamicOreVeins] Injected context into NoiseGeneratorSettings for " + pDimensionKey.location());
             } else {
