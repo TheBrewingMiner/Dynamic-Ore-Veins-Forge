@@ -5,8 +5,8 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 
 import java.util.List;
 
-public class NotCondition extends CombiningCondition {
-    public static final Codec<NotCondition> CODEC = CombiningCondition.codec(NotCondition::new);
+public class NotCondition extends CombiningConditionBase {
+    public static final Codec<NotCondition> CODEC = CombiningConditionBase.codec(NotCondition::new);
 
     public NotCondition(List<IVeinCondition> conditions){
         super(conditions);

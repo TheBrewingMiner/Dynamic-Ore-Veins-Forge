@@ -4,8 +4,7 @@
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:granite",
     "dimension": [
-        "minecraft:overworld",
-        "minecraft:the_nether"
+        "minecraft:overworld"
     ],
     "vein_toggle": {
         "input": {
