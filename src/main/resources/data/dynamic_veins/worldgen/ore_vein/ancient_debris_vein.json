@@ -57,6 +57,10 @@
     "type": "dynamic_veins:all_of",
     "conditions": [
       {
+        "type": "dynamic_veins:biome",
+        "biomes": "minecraft:soul_sand_valley"
+      },
+      {
         "type": "dynamic_veins:height_range",
         "min_inclusive": { "absolute": 8 },
         "max_inclusive": { "absolute": 30 }
