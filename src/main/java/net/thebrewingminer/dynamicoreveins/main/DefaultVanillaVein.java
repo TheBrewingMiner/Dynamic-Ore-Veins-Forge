@@ -32,7 +32,7 @@ public class DefaultVanillaVein {
             BlockStateProvider.simple(Blocks.RAW_COPPER_BLOCK),
             0.02f,
             BlockStateProvider.simple(Blocks.GRANITE),
-            new DensityFunctionThreshold(null, 0.0, Double.POSITIVE_INFINITY),
+            new DensityFunctionThreshold(null, Double.MIN_VALUE, Double.POSITIVE_INFINITY),
             new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD),
             new DensityFunctionThreshold(null, DensityFunctionThreshold.DEFAULT_MIN_THRESHOLD, DensityFunctionThreshold.DEFAULT_MAX_THRESHOLD),
             OreRichnessSettings.createDefault(),
