@@ -3,10 +3,15 @@ package net.thebrewingminer.dynamicoreveins.codec.condition;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DensityFunctionThreshold implements IVeinCondition{
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
@@ -14,7 +19,8 @@ public class DensityFunctionThreshold implements IVeinCondition{
     protected final double minThreshold;
     protected final double maxThreshold;
     protected final DensityFunction function;
-    protected DensityFunction wiredFunction = null;
+//    protected DensityFunction wiredFunction = null;
+    private final Map<ResourceKey<Level>, DensityFunction> mappedDensityFunctions = new ConcurrentHashMap<>();
 
     public DensityFunctionThreshold(@Nullable DensityFunction function, double minThreshold, double maxThreshold){
         if (minThreshold > maxThreshold){
@@ -42,18 +48,18 @@ public class DensityFunctionThreshold implements IVeinCondition{
             Either::right
     );
 
-    public double computeValue(DensityFunction densityFunction, Context context){
+    public static DensityFunctionThreshold createDefault(){
+        return new DensityFunctionThreshold(null, DEFAULT_MIN_THRESHOLD, DEFAULT_MAX_THRESHOLD);
+    }
+
+    protected double computeValue(DensityFunction densityFunction, Context context){
         int x = context.pos().getX();
         int y = context.pos().getY();
         int z = context.pos().getZ();
         return (densityFunction.compute(new DensityFunction.SinglePointContext(x, y, z)));
     }
 
-    public static DensityFunctionThreshold createDefault(){
-        return new DensityFunctionThreshold(null, DEFAULT_MIN_THRESHOLD, DEFAULT_MAX_THRESHOLD);
-    }
-
-    public DensityFunction function(){ return function; }
+    public DensityFunction rawFunction(){ return function; }
     public double minThreshold(){ return minThreshold; }
     public double maxThreshold(){ return maxThreshold; }
 
@@ -67,19 +73,19 @@ public class DensityFunctionThreshold implements IVeinCondition{
         if (!(context.chunkGenerator() instanceof NoiseBasedChunkGenerator)) return false;
 
         if(this.function == null){
-            throw new IllegalStateException("Density function in condition should not be null.");
+            throw new IllegalStateException("Density function in conditions should not be null.");
         }
 
-        if(wiredFunction == null){
-            wiredFunction = this.function.mapAll(new NoiseWiringHelper(context));
-        }
+        DensityFunction wiredFunction = mappedDensityFunctions.computeIfAbsent(context.dimension(), __ -> this.function.mapAll(new NoiseWiringHelper(context)));
 
         double value = computeValue(wiredFunction, context);
         return (value >= minThreshold && value <= maxThreshold);
     }
 
-//    @Override
-//    public Codec<? extends IVeinCondition> codec(){
-//        return CODEC;
-//    }
+    public DensityFunction getOrMapFunction(Context context) {
+        return mappedDensityFunctions.computeIfAbsent(context.dimension(), __ -> {
+            if (this.function == null) throw new IllegalStateException("Incorrectly called; Cannot use method getOrMapFunction() with nulled function DensityFunctionThreshold object.");
+            return this.function.mapAll(new NoiseWiringHelper(context));
+        });
+    }
 }
