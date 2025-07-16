@@ -29,6 +29,13 @@ public class NoiseWiringHelper implements DensityFunction.Visitor{
         this.randomFactory = context.randomFactory();
     }
 
+    public NoiseWiringHelper(long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
+        this.seed = seed;
+        this.useLegacyRandomSource = useLegacyRandomSource;
+        this.randomState = randomState;
+        this.randomFactory = randomFactory;
+    }
+
     private RandomSource newLegacyInstance(long noiseSeed) {
         return new LegacyRandomSource(seed + noiseSeed);
     }

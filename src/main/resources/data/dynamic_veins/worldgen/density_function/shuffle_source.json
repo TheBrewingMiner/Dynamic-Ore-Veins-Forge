@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:noise",
+  "noise": "dynamic_veins:shuffle_noise",
+  "xz_scale": 0.75,
+  "y_scale": 1.0
+}

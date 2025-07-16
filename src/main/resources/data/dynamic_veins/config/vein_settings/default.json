@@ -1,0 +1,5 @@
+{
+  "vanilla_veins_enabled": true,
+  "vanilla_priority": true,
+  "shuffle_source": "dynamic_veins:shuffle_source"
+}
