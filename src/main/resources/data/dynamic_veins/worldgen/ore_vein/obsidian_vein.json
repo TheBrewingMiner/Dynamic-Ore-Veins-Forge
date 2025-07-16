@@ -3,7 +3,10 @@
   "secondary_ore": "minecraft:crying_obsidian",
   "secondary_ore_chance": 0.20,
   "filler_block": "minecraft:smooth_basalt",
-  "dimension": "minecraft:overworld",
+  "dimension": [
+    "minecraft:overworld",
+    "minecraft:the_nether"
+  ],
   "vein_toggle": {
     "input": {
       "type": "minecraft:interpolated",
@@ -56,6 +59,15 @@
   "conditions": {
     "type": "dynamic_veins:not",
     "conditions": [
+      {
+        "type": "dynamic_veins:height_range",
+        "min_inclusive": {
+          "above_bottom": 0
+        },
+        "max_inclusive": {
+          "above_bottom": 4
+        }
+      },
       {
         "type": "dynamic_veins:height_range",
         "min_inclusive": {
