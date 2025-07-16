@@ -25,8 +25,7 @@ public record HeightRangeCondition(VerticalAnchor minInclusive, VerticalAnchor m
         return (posY >= minY && posY <= maxY);
     }
 
-//    @Override
-//    public Codec<? extends IVeinCondition> codec(){
-//        return CODEC;
-//    }
+    public static HeightRangeCondition createDefault(){
+        return new HeightRangeCondition(VerticalAnchor.aboveBottom(4), VerticalAnchor.belowTop(4));
+    }
 }
