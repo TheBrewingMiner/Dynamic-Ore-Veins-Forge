@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
+import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.main.DefaultVanillaVein;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 
@@ -19,9 +20,11 @@ public final class PrepareList {
 
     private PrepareList(){}
 
-    public static List<OreVeinConfig> prepareList(DensityFunction.FunctionContext functionContext, VeinSettingsConfig config, long worldSeed) {
+    public static List<OreVeinConfig> prepareList(DensityFunction.FunctionContext functionContext, IVeinCondition.Context veinContext) {
         Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getVeinRegistry();
-        DensityFunction shuffleSource = config.shuffleSource();
+        VeinSettingsConfig config = OreVeinRegistryHolder.getActiveConfig();
+
+        DensityFunction shuffleSource = config.getOrMapFunction(veinContext);
 
         OreVeinConfig IRON_VEIN = DefaultVanillaVein.ironVein();
         OreVeinConfig COPPER_VEIN = DefaultVanillaVein.copperVein();
@@ -31,7 +34,7 @@ public final class PrepareList {
 
         double rawNoise = shuffleSource.compute(functionContext);
         double shuffleSourceSeed = Math.floor(rawNoise);
-        long combinedSeed = (Double.doubleToLongBits(shuffleSourceSeed) ^ worldSeed);
+        long combinedSeed = (Double.doubleToLongBits(shuffleSourceSeed) ^ veinContext.seed());
         long shufflingSeed = SeedMath.mixSeed(combinedSeed);
 
         Random random = new Random(shufflingSeed);

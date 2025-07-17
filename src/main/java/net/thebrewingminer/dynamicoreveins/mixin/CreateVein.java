@@ -9,9 +9,7 @@ import net.minecraft.world.level.levelgen.*;
 import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
 import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
-import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
-import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -58,11 +56,6 @@ public abstract class CreateVein {
             boolean useLegacyRandomSource = noiseGeneratorSettings.useLegacyRandomSource();
             RandomState randomState = ((ISettingsAccessor) noiseChunk).getRandomState();
 
-            VeinSettingsConfig config = OreVeinRegistryHolder.getActiveConfig();
-            VeinSettingsConfig mappedConfig = config.mapAll(seed, useLegacyRandomSource, randomState, randomFactory);
-
-            List<OreVeinConfig> veinList = prepareList(functionContext, mappedConfig, seed);
-
             BlockPos pos = new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ());
 
             IVeinCondition.Context veinContext = new IVeinCondition.Context() {
@@ -75,6 +68,8 @@ public abstract class CreateVein {
                 @Override public PositionalRandomFactory randomFactory() { return randomFactory; }
                 @Override public ResourceKey<Level> dimension() { return currDimension; }
             };
+
+            List<OreVeinConfig> veinList = prepareList(functionContext, veinContext);
 
             return selectVein(functionContext, routerVeinToggle, routerVeinRidged, routerVeinGap, veinList, veinContext);
         };

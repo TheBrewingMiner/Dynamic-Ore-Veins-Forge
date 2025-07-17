@@ -2,21 +2,50 @@ package net.thebrewingminer.dynamicoreveins.codec;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.PositionalRandomFactory;
-import net.minecraft.world.level.levelgen.RandomState;
+import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 
-public record VeinSettingsConfig(boolean vanillaVeinsEnabled, boolean vanillaVeinsPrioritized, DensityFunction shuffleSource, boolean mapped){
-    public static final Codec<VeinSettingsConfig> CODEC = RecordCodecBuilder.create(configInstance -> configInstance.group(
-            Codec.BOOL.fieldOf("vanilla_veins_enabled").orElse(true).forGetter(VeinSettingsConfig::vanillaVeinsEnabled),
-            Codec.BOOL.fieldOf("vanilla_priority").orElse(true).forGetter(VeinSettingsConfig::vanillaVeinsPrioritized),
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shuffle_source").forGetter(VeinSettingsConfig::shuffleSource)
-    ).apply(configInstance, (vanillaVeinsEnabled, vanillaVeinsPrioritized, shuffleSource) -> new VeinSettingsConfig(vanillaVeinsEnabled, vanillaVeinsPrioritized, shuffleSource, false)));
+import java.util.concurrent.ConcurrentHashMap;
 
-    public VeinSettingsConfig mapAll(long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
-        if (this.mapped) return this;
-        DensityFunction mappedShuffle = this.shuffleSource.mapAll(new NoiseWiringHelper(seed, useLegacyRandomSource, randomState, randomFactory));
-        return new VeinSettingsConfig(this.vanillaVeinsEnabled, this.vanillaVeinsPrioritized, mappedShuffle, true);
+public class VeinSettingsConfig{
+    protected boolean vanillaVeinsEnabled;
+    protected boolean vanillaVeinsPrioritized;
+    protected DensityFunction shuffleSource;
+
+    private final ConcurrentHashMap<ResourceKey<Level>, DensityFunction> mappedDensityFunctions = new ConcurrentHashMap<>();
+
+    public static final Codec<VeinSettingsConfig> CODEC = RecordCodecBuilder.create(configInstance -> configInstance.group(
+            Codec.BOOL.fieldOf("vanilla_veins_enabled").orElse(true).forGetter(config -> config.vanillaVeinsEnabled),
+            Codec.BOOL.fieldOf("vanilla_priority").orElse(true).forGetter(config -> config.vanillaVeinsPrioritized),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shuffle_source").forGetter(config -> config.shuffleSource)
+    ).apply(configInstance, VeinSettingsConfig::new));
+
+    public VeinSettingsConfig(boolean vanillaVeinsEnabled, boolean vanillaVeinsPrioritized, DensityFunction shuffleSource){
+        this.vanillaVeinsEnabled = vanillaVeinsEnabled;
+        this.vanillaVeinsPrioritized = vanillaVeinsPrioritized;
+        this.shuffleSource = shuffleSource;
+    }
+
+    public boolean vanillaVeinsEnabled(){
+        return this.vanillaVeinsEnabled;
+    }
+
+    public boolean vanillaVeinsPrioritized(){
+        return this.vanillaVeinsPrioritized;
+    }
+
+    public DensityFunction shuffleSource(){
+        return this.shuffleSource;
+    }
+
+    public DensityFunction getOrMapFunction(IVeinCondition.Context context){
+        return mappedDensityFunctions.computeIfAbsent(context.dimension(), __ -> this.shuffleSource.mapAll(new NoiseWiringHelper(context)));
+    }
+
+    public void clearCache(){
+        mappedDensityFunctions.clear();
     }
 }
