@@ -11,16 +11,18 @@ import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DensityFunctionThreshold implements IVeinCondition{
+    private static final Set<DensityFunctionThreshold> INSTANCES = ConcurrentHashMap.newKeySet();
+    private final Map<ResourceKey<Level>, DensityFunction> mappedDensityFunctions = new ConcurrentHashMap<>();
+
     public static final double DEFAULT_MIN_THRESHOLD = -1.0;
     public static final double DEFAULT_MAX_THRESHOLD = 1.0;
     protected final double minThreshold;
     protected final double maxThreshold;
     protected final DensityFunction function;
-//    protected DensityFunction wiredFunction = null;
-    private final Map<ResourceKey<Level>, DensityFunction> mappedDensityFunctions = new ConcurrentHashMap<>();
 
     public DensityFunctionThreshold(@Nullable DensityFunction function, double minThreshold, double maxThreshold){
         if (minThreshold > maxThreshold){
@@ -29,6 +31,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
         this.function = function;
         this.minThreshold = minThreshold;
         this.maxThreshold = maxThreshold;
+        INSTANCES.add(this);
     }
 
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -87,5 +90,15 @@ public class DensityFunctionThreshold implements IVeinCondition{
             if (this.function == null) throw new IllegalStateException("Incorrectly called; Cannot use method getOrMapFunction() with nulled function DensityFunctionThreshold object.");
             return this.function.mapAll(new NoiseWiringHelper(context));
         });
+    }
+
+    public void clearInstanceCache(){
+        mappedDensityFunctions.clear();
+    }
+
+    public static void clearCache(){
+        for (DensityFunctionThreshold instance : INSTANCES){
+            instance.clearInstanceCache();
+        }
     }
 }
