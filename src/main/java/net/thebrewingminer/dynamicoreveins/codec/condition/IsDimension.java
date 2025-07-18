@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class IsDimension {
+    // Encode a level resource key or list of level resource keys.
     public static final Codec<List<ResourceKey<Level>>> CODEC = Codec.either(
             ResourceKey.codec(Registries.DIMENSION),
             ResourceKey.codec(Registries.DIMENSION).listOf()

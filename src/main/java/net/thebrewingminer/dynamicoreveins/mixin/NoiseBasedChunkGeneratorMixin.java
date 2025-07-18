@@ -14,7 +14,6 @@ import net.minecraft.world.level.levelgen.blending.Blender;
 import net.thebrewingminer.dynamicoreveins.accessor.IDimensionAware;
 import net.thebrewingminer.dynamicoreveins.accessor.ISettingsAccessor;
 import net.thebrewingminer.dynamicoreveins.accessor.IWorldgenContext;
-import net.thebrewingminer.dynamicoreveins.accessor.WorldgenContextCache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,14 +27,10 @@ public class NoiseBasedChunkGeneratorMixin implements ISettingsAccessor {
     private NoiseGeneratorSettings settings;
 
     @Override
-    public NoiseGeneratorSettings getNoiseGenSettings() {
-        return this.settings;
-    }
+    public NoiseGeneratorSettings getNoiseGenSettings() { return this.settings; }
 
     @Override
-    public RandomState getRandomState() {
-        return null;
-    }
+    public RandomState getRandomState() { return null; }
 
 
     @Inject(
@@ -43,16 +38,26 @@ public class NoiseBasedChunkGeneratorMixin implements ISettingsAccessor {
             at = @At("RETURN")
     )
     private void attachWorldgenContext(ChunkAccess pChunk, StructureManager pStructureManager, Blender pBlender, RandomState pRandom, CallbackInfoReturnable<NoiseChunk> cir) {
+        // Grab the noise chunk being created by NoiseBasedChunkGenerator.
         NoiseChunk noiseChunk = cir.getReturnValue();
-        ChunkGenerator generator = (ChunkGenerator)(Object)this;
-        ResourceKey<Level> dimension = ((IDimensionAware)generator).getDimension();
-        LevelHeightAccessor heightAccessor = WorldgenContextCache.getHeightAccessor(dimension);
 
-        NoiseGeneratorSettings settings = ((ISettingsAccessor) noiseChunk).getNoiseGenSettings();
+        // Grab the instance of the chunk generator (This NoiseBasedChunkGenerator instance).
+        ChunkGenerator chunkGenerator = (ChunkGenerator)(Object)this;
+
+        // Grab the dimension cached into the chunk generator (stored by IDimensionAware in ChunkGeneratorMixin, set by ServerLevelMixin).
+        ResourceKey<Level> dimension = ((IDimensionAware)chunkGenerator).getDimension();
+
+        // Grab the level's height accessor from ChunkAccess parameter.
+        LevelHeightAccessor heightAccessor = pChunk.getHeightAccessorForGeneration();
+
+        // Grab the noise settings cached by the noise chunk (accessed via ISettingsAccessor in NoiseChunkMixin).
+        NoiseGeneratorSettings settings = ((ISettingsAccessor)noiseChunk).getNoiseGenSettings();
+
+        // Extract the worldgen context from the noise settings (stored by IWorldgenContext in NoiseGeneratorSettingsMixin).
         IWorldgenContext wgContext = (IWorldgenContext)(Object)settings;
 
         wgContext.setDimension(dimension);
-        wgContext.setChunkGenerator(generator);
+        wgContext.setChunkGenerator(chunkGenerator);
         wgContext.setHeightAccessor(heightAccessor);
     }
 }

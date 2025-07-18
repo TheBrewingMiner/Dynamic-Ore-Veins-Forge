@@ -13,6 +13,7 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.SimpleStateProvider;
 
 public class ResourceKeyOrBlockState {
+    // Encodes a direct resource key for the block, or encodes a BlockStateProvider.
     public static final Codec<BlockStateProvider> CODEC = Codec.either(
             ResourceLocation.CODEC,
             BlockStateProvider.CODEC

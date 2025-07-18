@@ -20,10 +20,11 @@ public class NoiseChunkMixin implements ISettingsAccessor {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onConstruct(int pCellCountXZ, RandomState pRandom, int p_224345_, int p_224346_, NoiseSettings pNoiseSettings, DensityFunctions.BeardifierOrMarker pBeardifier, NoiseGeneratorSettings pNoiseGeneratorSettings, Aquifer.FluidPicker pFluidPicker, Blender pBlendifier, CallbackInfo ci){
-        this.cachedNoiseGenSettings = pNoiseGeneratorSettings;
-        this.cachedRandomState = pRandom;
+        this.cachedNoiseGenSettings = pNoiseGeneratorSettings;      // Noise settings in Noise Chunk are private, so manually cache.
+        this.cachedRandomState = pRandom;                           // Cache the random state that is passed into the constructor.
     }
 
+    // Getters.
     @Override
     public NoiseGeneratorSettings getNoiseGenSettings() {
         return cachedNoiseGenSettings;

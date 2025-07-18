@@ -12,6 +12,7 @@ import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistries;
 public class ModRegistryEvents {
     @SubscribeEvent
     public static void onRegisterDataPackRegistry(DataPackRegistryEvent.NewRegistry event) {
+        // Register registries for datapacks.
         event.dataPackRegistry(OreVeinRegistries.ORE_VEIN_REGISTRY, OreVeinConfig.CODEC);
         event.dataPackRegistry(OreVeinRegistries.VEIN_SETTINGS_REGISTRY, VeinSettingsConfig.CODEC);
     }

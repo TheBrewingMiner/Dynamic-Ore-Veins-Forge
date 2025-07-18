@@ -7,14 +7,16 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import java.util.List;
 
 public class FindMatchingHeightRange {
+    // Helps take all height range conditions within the given list and builds a height range automatically for vein computation.
     private FindMatchingHeightRange(){}
 
+    @SuppressWarnings("ReplaceNullCheck")
     public static HeightRangeWrapper findMatchingHeightRange(List<IVeinCondition> conditions, IVeinCondition.Context veinContext) {
         WorldGenerationContext worldGenContext = new WorldGenerationContext(veinContext.chunkGenerator(), veinContext.heightAccessor());
         HeightRangeWrapper firstMatchingRange = null;
         int matchingRangeCounter = 0;
-        int DEFAULT_MIN_Y = worldGenContext.getMinGenY();
-        int DEFAULT_MAX_Y = DEFAULT_MIN_Y + worldGenContext.getGenDepth();
+        int DEFAULT_MIN_Y = worldGenContext.getMinGenY() + 4;
+        int DEFAULT_MAX_Y = (DEFAULT_MIN_Y + worldGenContext.getGenDepth()) - 4;
         int minOverlapY = Integer.MIN_VALUE;
         int maxOverlapY = Integer.MAX_VALUE;
         int y = veinContext.pos().getY();

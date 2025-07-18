@@ -9,8 +9,12 @@ import net.minecraft.world.level.levelgen.PositionalRandomFactory;
 import net.minecraft.world.level.levelgen.RandomState;
 
 public interface IVeinCondition {
+    // Conditions must implement a test method and a "type" (string identifier).
     boolean test(Context context);
     String type();
+
+    // Defines the "worldgen context" that carries the necessary information
+    // to test at a position in the world.
     interface Context {
         BlockPos pos();
         LevelHeightAccessor heightAccessor();

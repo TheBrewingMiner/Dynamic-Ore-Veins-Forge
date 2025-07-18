@@ -71,7 +71,7 @@
       {
         "type": "dynamic_veins:height_range",
         "min_inclusive": {
-          "absolute": 0
+          "absolute": 48
         },
         "max_inclusive": {
           "below_top": 0

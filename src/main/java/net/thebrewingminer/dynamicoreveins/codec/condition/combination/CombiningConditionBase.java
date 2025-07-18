@@ -21,6 +21,8 @@ public abstract class CombiningConditionBase implements IVeinCondition {
     }
 
     public static <T extends CombiningConditionBase> Codec<T> codec(Function<List<IVeinCondition>, T> factory){
+        // Encodes JSON objects as a list of vein conditions, or takes a direct vein condition object
+        // and treats it as a list.
         Codec<List<IVeinCondition>> listOrObject = Codec.either(
             VeinConditionRegistry.predicateCodec(),
             VeinConditionRegistry.predicateCodec().listOf()
@@ -35,8 +37,9 @@ public abstract class CombiningConditionBase implements IVeinCondition {
             }
         );
 
+        // Build the codec for use by the object passed in.
         return RecordCodecBuilder.create(instance -> instance.group(
-                listOrObject.fieldOf("conditions").forGetter(CombiningConditionBase::conditions)
+            listOrObject.fieldOf("conditions").forGetter(CombiningConditionBase::conditions)
         ).apply(instance, factory));
     }
 }

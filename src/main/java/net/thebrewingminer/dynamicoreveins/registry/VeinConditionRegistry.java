@@ -13,6 +13,7 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.combination.NotCondit
 import java.util.Map;
 
 public class VeinConditionRegistry {
+    // Maps the provided string identifier to the matching codec.
     public static final Map<String, Codec<? extends IVeinCondition>> REGISTRY = Map.of(
             "dynamic_veins:height_range", HeightRangeCondition.CODEC,
             "dynamic_veins:density_threshold", DensityFunctionThreshold.CODEC,
@@ -27,7 +28,8 @@ public class VeinConditionRegistry {
 
     private static class LazyCodecHolder{
         private static final Codec<IVeinCondition> PREDICATE_CODEC = new Codec<>() {
-            @Override
+
+            // Process the string identifier and encodes/decodes according to the condition map REGISTRY.
             public <T> DataResult<Pair<IVeinCondition, T>> decode(DynamicOps<T> ops, T input) {
                 return ops.getMap(input).flatMap(map -> {
                     T typeKey = ops.createString("type");
@@ -48,9 +50,10 @@ public class VeinConditionRegistry {
                 });
             }
 
-            @Override
+
             public <T> DataResult<T> encode(IVeinCondition input, DynamicOps<T> ops, T prefix) {
                 String typeName = input.type();
+
                 @SuppressWarnings("unchecked")
                 Codec<IVeinCondition> codec = (Codec<IVeinCondition>) VeinConditionRegistry.REGISTRY.get(typeName);
                 if (codec == null) {
@@ -61,6 +64,8 @@ public class VeinConditionRegistry {
             }
         };
 
+        // Builds the condition codec that accepts a direct predicate object or a list of predicates.
+        // Lists of predicates are implicitly AND (All) conditions.
         private static final Codec<IVeinCondition> CODEC = Codec.either(
                 PREDICATE_CODEC,            // Encode single object
                 PREDICATE_CODEC.listOf()    // Encode list of conditions
@@ -85,6 +90,7 @@ public class VeinConditionRegistry {
         );
     }
 
+    // Getters.
     public static Codec<IVeinCondition> predicateCodec() {
         return LazyCodecHolder.PREDICATE_CODEC;
     }

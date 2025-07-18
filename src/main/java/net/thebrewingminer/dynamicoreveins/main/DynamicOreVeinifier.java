@@ -33,7 +33,7 @@ public final class DynamicOreVeinifier {
             /* Check if in suitable dimension. */
             if (!veinConfig.dimension().contains(veinContext.dimension())) continue;
 
-            /* Use configured vein toggle and shaping DFs if specified */
+            /* Use configured vein toggle and shaping density functions, if specified */
             localVeinToggle = (veinConfig.veinToggle().rawFunction() != null ? veinConfig.veinToggle().getOrMapFunction(veinContext) : routerVeinToggle);
             localVeinRidged = (veinConfig.veinRidged().rawFunction() != null ? veinConfig.veinRidged().getOrMapFunction(veinContext) : routerVeinRidged);
             localVeinGap = (veinConfig.veinGap().rawFunction() != null ? veinConfig.veinGap().getOrMapFunction(veinContext) : routerVeinGap);
@@ -41,6 +41,7 @@ public final class DynamicOreVeinifier {
             /* Calculate if in toggle's threshold */
             if (!inThreshold(localVeinToggle, veinConfig.veinToggle().minThreshold(), veinConfig.veinToggle().maxThreshold(), veinContext)) continue;
 
+            /* Test the vein's conditions. If passed, set the relevant info and call the next function */
             if (veinConfig.conditions().test(veinContext)){
                 selectedConfig = veinConfig;
                 veinToggle = localVeinToggle;
@@ -50,23 +51,26 @@ public final class DynamicOreVeinifier {
             }
         }
 
-        if (selectedConfig == null) return null;
-        List<IVeinCondition> conditionsList = flattenConditions(selectedConfig.conditions());
-        HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);
+        if (selectedConfig == null) return null;                                                // If no config was found, return null.
+        List<IVeinCondition> conditionsList = flattenConditions(selectedConfig.conditions());   // Prepare a conditions list.
+        HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);  // Build a height range for the selected vein.
+
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
 
     public static BlockState dynamicOreVeinifier(DensityFunction.FunctionContext functionContext, DensityFunction veinToggle, DensityFunction veinRidged, DensityFunction veinGap, OreVeinConfig config, IVeinCondition.Context veinContext, HeightRangeWrapper heightRange){
         RandomSource seededRandom = veinContext.randomFactory().at(veinContext.pos());
 
+        // Get all relevant info from the config.
         BlockState ore = config.ore().getState(seededRandom, veinContext.pos());
         BlockState secondaryOre = config.secondaryOre().getState(seededRandom, veinContext.pos());
         BlockState fillerBlock = config.fillerBlock().getState(seededRandom, veinContext.pos());
         float secondaryOreChance = config.secondaryOreChance();
         OreRichnessSettings settings = config.veinSettings();
 
-        BlockState empty = null;
+        BlockState empty = null;    // Default value.
 
+        // Vanilla veinifier algorithm, de-hardcoded.
         double toggleValue = veinToggle.compute(functionContext);
         int currY = veinContext.pos().getY();
         double toggleStrength = Math.abs(toggleValue);
@@ -85,10 +89,10 @@ public final class DynamicOreVeinifier {
                 } else {
                     double richness = Mth.clampedMap(toggleStrength, settings.minRichnessThreshold(), settings.maxRichnessThreshold(), settings.minRichness(), settings.maxRichness());
                     if(((double)seededRandom.nextFloat() < richness) && (veinGap.compute(functionContext) > settings.skipOreThreshold())){
-//                        System.out.println("Success! " + veinContext.pos().toString());
+//                        System.out.println("Success! " + veinContext.pos().toString());       // Debug
                         return (seededRandom.nextFloat() < secondaryOreChance ? secondaryOre : ore);
                     } else {
-//                        System.out.println("Success! " + veinContext.pos().toString());
+//                        System.out.println("Success! " + veinContext.pos().toString());       // Debug
                         return fillerBlock;
                     }
                 }

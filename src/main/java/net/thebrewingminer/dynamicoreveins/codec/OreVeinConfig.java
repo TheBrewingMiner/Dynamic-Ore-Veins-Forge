@@ -12,14 +12,15 @@ import java.util.Collections;
 import java.util.List;
 
 public record OreVeinConfig(BlockStateProvider ore, BlockStateProvider secondaryOre, float secondaryOreChance, BlockStateProvider fillerBlock, DensityFunctionThreshold veinToggle, DensityFunctionThreshold veinRidged, DensityFunctionThreshold veinGap, OreRichnessSettings veinSettings, List<ResourceKey<Level>> dimension, IVeinCondition conditions){
+    // The main config for developers to implement custom veins.
     public static final Codec<OreVeinConfig> CODEC = RecordCodecBuilder.create(oreVeinConfigInstance -> oreVeinConfigInstance.group(
         ResourceKeyOrBlockState.CODEC.fieldOf("ore").forGetter(OreVeinConfig::ore),
         ResourceKeyOrBlockState.CODEC.fieldOf("secondary_ore").forGetter(OreVeinConfig::secondaryOre),
         Codec.floatRange(0.0f, 1.0f).fieldOf("secondary_ore_chance").orElse(0.02f).forGetter(OreVeinConfig::secondaryOreChance),
-        ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(config -> config.fillerBlock),
+        ResourceKeyOrBlockState.CODEC.fieldOf("filler_block").forGetter(OreVeinConfig::fillerBlock),
         DensityFunctionThreshold.CODEC.optionalFieldOf("vein_toggle", DensityFunctionThreshold.createDefault()).forGetter(OreVeinConfig::veinToggle),
-        DensityFunctionThreshold.CODEC.optionalFieldOf("vein_ridged", DensityFunctionThreshold.createDefault()).forGetter(OreVeinConfig::veinRidged),
-        DensityFunctionThreshold.CODEC.optionalFieldOf("vein_gap", DensityFunctionThreshold.createDefault()).forGetter(OreVeinConfig::veinGap),
+        DensityFunctionThreshold.CODEC.optionalFieldOf("vein_ridged", DensityFunctionThreshold.createDefault()).forGetter(OreVeinConfig::veinRidged),   // These don't necessarily need to be DensityFunctionThreshold
+        DensityFunctionThreshold.CODEC.optionalFieldOf("vein_gap", DensityFunctionThreshold.createDefault()).forGetter(OreVeinConfig::veinGap),         // objects. It was just easier for nullability.
         OreRichnessSettings.CODEC.optionalFieldOf("vein_settings", OreRichnessSettings.createDefault()).forGetter(OreVeinConfig::veinSettings),
         IsDimension.CODEC.fieldOf("dimension").orElse(Collections.singletonList(Level.OVERWORLD)).forGetter(OreVeinConfig::dimension),
         VeinConditionRegistry.codec().optionalFieldOf("conditions", HeightRangeCondition.createDefault()).forGetter(OreVeinConfig::conditions)

@@ -14,10 +14,12 @@ public class OreVeinRegistryHolder {
     public static final ResourceKey<Registry<VeinSettingsConfig>> CONFIG_REGISTRY = OreVeinRegistries.VEIN_SETTINGS_REGISTRY;
 
     public static void init(RegistryAccess registryAccess) {
+        // Stores a registry access instance.
         access = registryAccess;
     }
 
     public static Registry<OreVeinConfig> getVeinRegistry() {
+        // Grabs the vein registry with registry-awareness.
         if (access == null) {
             throw new IllegalStateException("RegistryAccess has not been initialized.");
         }
@@ -25,6 +27,7 @@ public class OreVeinRegistryHolder {
     }
 
     public static Registry<VeinSettingsConfig> getConfigRegistry() {
+        // Grabs the config registry with registry-awareness.
         if (access == null) {
             throw new IllegalStateException("RegistryAccess has not been initialized.");
         }
@@ -32,6 +35,7 @@ public class OreVeinRegistryHolder {
     }
 
     public static VeinSettingsConfig getActiveConfig() {
+        // Grabs the highest priority config.
         return getConfigRegistry().entrySet().stream()
             .findFirst()
             .map(Map.Entry::getValue)

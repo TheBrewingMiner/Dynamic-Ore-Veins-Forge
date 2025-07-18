@@ -1,5 +1,21 @@
 {
-    "ore": "minecraft:deepslate_gold_ore",
+    "ore": {
+        "type": "minecraft:weighted_state_provider",
+        "entries": [
+            {
+                "weight": 1,
+                "data": {
+                    "Name": "minecraft:gold_ore"
+                }
+            },
+            {
+                "weight": 3,
+                "data": {
+                    "Name": "minecraft:deepslate_gold_ore"
+                }
+            }
+        ]
+    },
     "secondary_ore": "minecraft:raw_gold_block",
     "secondary_ore_chance": 0.02,
     "filler_block": "minecraft:granite",

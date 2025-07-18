@@ -13,6 +13,7 @@ public record OreRichnessSettings(float minRichness, float maxRichness, float mi
     public static final int DEFAULT_EDGE_ROUNDOFF_BEGIN = 20;
     public static final double DEFAULT_MAX_EDGE_ROUNDOFF = 0.2;
 
+    // Encodes the numerical values for vein generation.
     public static final Codec<OreRichnessSettings> CODEC = RecordCodecBuilder.create(oreRichnessSettingsInstance -> oreRichnessSettingsInstance.group(
         Codec.FLOAT.fieldOf("min_ore_richness").orElse(DEFAULT_MIN_RICHNESS).forGetter(OreRichnessSettings::minRichness),
         Codec.FLOAT.fieldOf("max_ore_richness").orElse(DEFAULT_MAX_RICHNESS).forGetter(OreRichnessSettings::maxRichness),
@@ -24,6 +25,7 @@ public record OreRichnessSettings(float minRichness, float maxRichness, float mi
         Codec.DOUBLE.fieldOf("max_edge_roundoff").orElse(DEFAULT_MAX_EDGE_ROUNDOFF).forGetter(OreRichnessSettings::maxEdgeRoundOff)
     ).apply(oreRichnessSettingsInstance, OreRichnessSettings::new));
 
+    // Create a default that mimics the vanilla parameters.
     public static OreRichnessSettings createDefault(){
         return new OreRichnessSettings(
             DEFAULT_MIN_RICHNESS,

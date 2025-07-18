@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ChunkGenerator.class)
 abstract class ChunkGeneratorMixin implements IDimensionAware {
+    // Store the owning-dimension in the chunk generator.
 
     @Unique
     private ResourceKey<Level> dimension;
