@@ -58,25 +58,56 @@
   },
   "conditions": {
     "type": "dynamic_veins:not",
-    "conditions": [
-      {
-        "type": "dynamic_veins:height_range",
-        "min_inclusive": {
-          "above_bottom": 0
-        },
-        "max_inclusive": {
-          "above_bottom": 4
+    "conditions": {
+      "type": "dynamic_veins:not",
+      "conditions": [
+        {
+          "type": "dynamic_veins:any_of",
+          "conditions": [
+            {
+              "type": "dynamic_veins:all_of",
+              "conditions": [
+                {
+                  "type": "dynamic_veins:height_range",
+                  "min_inclusive": {
+                    "absolute": 76
+                  },
+                  "max_inclusive": {
+                    "absolute": 84
+                  }
+                },
+                {
+                  "type": "dynamic_veins:biome",
+                  "biomes": "minecraft:plains"
+                }
+              ]
+            },
+            {
+              "type": "dynamic_veins:not",
+              "conditions": [
+                {
+                  "type": "dynamic_veins:height_range",
+                  "min_inclusive": {
+                    "above_bottom": 0
+                  },
+                  "max_inclusive": {
+                    "above_bottom": 4
+                  }
+                },
+                {
+                  "type": "dynamic_veins:height_range",
+                  "min_inclusive": {
+                    "absolute": 48
+                  },
+                  "max_inclusive": {
+                    "below_top": 0
+                  }
+                }
+              ]
+            }
+          ]
         }
-      },
-      {
-        "type": "dynamic_veins:height_range",
-        "min_inclusive": {
-          "absolute": 48
-        },
-        "max_inclusive": {
-          "below_top": 0
-        }
-      }
-    ]
+      ]
+    }
   }
 }
