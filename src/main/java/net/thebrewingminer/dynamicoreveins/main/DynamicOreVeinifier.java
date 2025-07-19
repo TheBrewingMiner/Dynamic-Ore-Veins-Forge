@@ -11,8 +11,8 @@ import net.thebrewingminer.dynamicoreveins.helper.HeightRangeWrapper;
 
 import java.util.List;
 
+import static net.thebrewingminer.dynamicoreveins.helper.ExtractHeightConditions.extractHeightConditions;
 import static net.thebrewingminer.dynamicoreveins.helper.FindMatchingHeightRange.findMatchingHeightRange;
-import static net.thebrewingminer.dynamicoreveins.helper.FlattenConditions.flattenConditions;
 import static net.thebrewingminer.dynamicoreveins.helper.InThresholdHelper.inThreshold;
 
 public final class DynamicOreVeinifier {
@@ -52,8 +52,9 @@ public final class DynamicOreVeinifier {
         }
 
         if (selectedConfig == null) return null;                                                // If no config was found, return null.
-        List<IVeinCondition> conditionsList = flattenConditions(selectedConfig.conditions());   // Prepare a conditions list.
+        List<IVeinCondition> conditionsList = extractHeightConditions(selectedConfig.conditions(), veinContext);   // Prepare a conditions list.
         HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);  // Build a height range for the selected vein.
+        System.out.println(heightRange.toString());
 
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
