@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
+import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.helper.HeightRangeWrapper;
 
@@ -52,9 +53,9 @@ public final class DynamicOreVeinifier {
         }
 
         if (selectedConfig == null) return null;                                                // If no config was found, return null.
-        List<IVeinCondition> conditionsList = extractHeightConditions(selectedConfig.conditions(), veinContext);   // Prepare a conditions list.
-        HeightRangeWrapper heightRange = findMatchingHeightRange(conditionsList, veinContext);  // Build a height range for the selected vein.
-        System.out.println(heightRange.toString());
+
+        HeightRangeWrapper heightRange = findMatchingHeightRange(selectedConfig, veinContext);  // Build a height range for the selected vein.
+        System.out.println(heightRange);
 
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }

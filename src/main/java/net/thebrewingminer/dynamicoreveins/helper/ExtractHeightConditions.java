@@ -21,15 +21,15 @@ public class ExtractHeightConditions {
 
     private ExtractHeightConditions(){}
 
-    public static List<IVeinCondition> extractHeightConditions(IVeinCondition root, IVeinCondition.Context context) {
-        List<IVeinCondition> flatList = new ArrayList<>();      // The list to return afterward.
+    public static List<HeightRangeCondition> extractHeightConditions(IVeinCondition root, IVeinCondition.Context context) {
+        List<HeightRangeCondition> flatList = new ArrayList<>();      // The list to return afterward.
         WorldGenerationContext worldGenerationContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()); // WG context to resolve height range bounds.
         flattenInto(root, flatList, worldGenerationContext);    // Traverse the conditions tree and flatten it into one list.
 
         return flatList;
     }
 
-    private static void flattenInto(IVeinCondition condition, List<IVeinCondition> output, WorldGenerationContext worldGenerationContext) {
+    private static void flattenInto(IVeinCondition condition, List<HeightRangeCondition> output, WorldGenerationContext worldGenerationContext) {
         // Recursively split each combining condition list into a unified output list.
         if (condition instanceof AllConditions all) {
             for (IVeinCondition sub : all.conditions()) {
@@ -42,7 +42,7 @@ public class ExtractHeightConditions {
         } else if (condition instanceof NotCondition not) {
             // Special case: NOT.
             // Process the inner condition(s) of this object with a temporary list before adding to the output list.
-            List<IVeinCondition> innerConditions = new ArrayList<>();
+            List<HeightRangeCondition> innerConditions = new ArrayList<>();
 
             // Recursively collect and flatten all conditions in the NotCondition object before attempting to invert.
             // Store that into the temporary list. This ensures all nested combinations are expanded first.
@@ -52,9 +52,8 @@ public class ExtractHeightConditions {
 
             // Extract all HeightRangeCondition objects from the temporary list.
             List<HeightRangeCondition> innerNotHeightRanges = innerConditions.stream()
-                    .filter(c -> c instanceof HeightRangeCondition)                 // Filters for only HeightRangeCondition instances.
-                    .map(c -> (HeightRangeCondition)c)
-                    .toList();
+                .filter(c -> c instanceof HeightRangeCondition)                 // Filters for only HeightRangeCondition instances.
+                .toList();
 
             // Compute the complement of any and all found height ranges in this NOT object.
             computeComplementRanges(innerNotHeightRanges, output, worldGenerationContext);
@@ -64,12 +63,12 @@ public class ExtractHeightConditions {
         }
     }
 
-    private static void computeComplementRanges(List<HeightRangeCondition> negatedRanges, List<IVeinCondition> output, WorldGenerationContext worldGenerationContext){
+    private static void computeComplementRanges(List<HeightRangeCondition> negatedRanges, List<HeightRangeCondition> output, WorldGenerationContext worldGenerationContext){
         if (negatedRanges.isEmpty()) return;
 
         List<HeightRangeCondition> sortedRanges = negatedRanges.stream()
-                .sorted(Comparator.comparingInt(h -> h.minInclusive().resolveY(worldGenerationContext)))    // Sort ranges in increasing order by minimum y.
-                .toList();
+            .sorted(Comparator.comparingInt(h -> h.minInclusive().resolveY(worldGenerationContext)))    // Sort ranges in increasing order by minimum y.
+            .toList();
 
         // Level height context.
         int worldMinY = worldGenerationContext.getMinGenY();
