@@ -53,7 +53,7 @@ public class NoiseBasedChunkGeneratorMixin implements ISettingsAccessor {
         // Grab the noise settings cached by the noise chunk (accessed via ISettingsAccessor in NoiseChunkMixin).
         NoiseGeneratorSettings settings = ((ISettingsAccessor)noiseChunk).getNoiseGenSettings();
 
-        // Extract the worldgen context from the noise settings (stored by IWorldgenContext in NoiseGeneratorSettingsMixin).
+        // Store the worldgen context into the noise settings (stored by IWorldgenContext in NoiseGeneratorSettingsMixin).
         IWorldgenContext wgContext = (IWorldgenContext)(Object)settings;
 
         wgContext.setDimension(dimension);
