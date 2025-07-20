@@ -1,16 +1,18 @@
 package net.thebrewingminer.dynamicoreveins.helper;
 
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.WorldGenerationContext;
+import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.HeightRangeCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.codec.condition.combination.AllConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.combination.AnyConditions;
 import net.thebrewingminer.dynamicoreveins.codec.condition.combination.NotCondition;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExtractHeightConditions {
     // Helps "flatten" the condition logic tree of a vein's condition list.
@@ -19,9 +21,14 @@ public class ExtractHeightConditions {
     // height range predicates. This list is then passed onto FindMatchingHeightRange() to determine the valid height range to use for vein
     // generation (edge roundoff).
 
+    private record CacheKey(OreVeinConfig config, ResourceKey<Level> dimensionKey){}    // Used to pair which config and dimension of the worldgen context.
+    private static final Map<CacheKey, List<HeightRangeCondition>> cachedHeightRangeList = new ConcurrentHashMap<>();   // Used to cache computed lists.
+
+
     private ExtractHeightConditions(){}
 
-    public static List<HeightRangeCondition> extractHeightConditions(IVeinCondition root, IVeinCondition.Context context) {
+    public static List<HeightRangeCondition> extractHeightConditions(OreVeinConfig veinConfig, IVeinCondition.Context context) {
+        IVeinCondition root = veinConfig.conditions();  // The "conditions" field. Either a predicate or an AllConditions object of predicates.
         List<HeightRangeCondition> flatList = new ArrayList<>();      // The list to return afterward.
         WorldGenerationContext worldGenerationContext = new WorldGenerationContext(context.chunkGenerator(), context.heightAccessor()); // WG context to resolve height range bounds.
         flattenInto(root, flatList, worldGenerationContext);    // Traverse the conditions tree and flatten it into one list.
@@ -73,7 +80,7 @@ public class ExtractHeightConditions {
         // Level height context.
         int worldMinY = worldGenerationContext.getMinGenY();
         int worldMaxY = worldMinY + worldGenerationContext.getGenDepth();
-        int currY = worldMinY;  // Start iterating over ranges up from the minimum y.
+        int currY = worldMinY;  // Start iterating over ranges up from the minimum y (beginning of the sortedRanges list).
 
         // Iterate through the height ranges and find gaps.
         for (HeightRangeCondition heightRange : sortedRanges){
@@ -94,5 +101,17 @@ public class ExtractHeightConditions {
         if (currY <= worldMaxY){
             output.add(new HeightRangeCondition(VerticalAnchor.absolute(currY), VerticalAnchor.absolute(worldMaxY)));
         }
+    }
+
+    public static List<HeightRangeCondition> getOrCacheList(OreVeinConfig veinConfig, IVeinCondition.Context context){
+        // Lazily compute the HeightRangeCondition list per config per dimension.
+        // Cache it for later calls.
+        CacheKey key = new CacheKey(veinConfig, context.dimension());
+        return cachedHeightRangeList.computeIfAbsent(key, heightList -> Collections.unmodifiableList(extractHeightConditions(veinConfig, context)));
+    }
+
+    public static void clearCache(){
+        // Clear the cache.
+        cachedHeightRangeList.clear();
     }
 }

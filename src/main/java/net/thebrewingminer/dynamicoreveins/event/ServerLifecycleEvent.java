@@ -10,6 +10,7 @@ import net.thebrewingminer.dynamicoreveins.DynamicOreVeins;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.DensityFunctionThreshold;
+import net.thebrewingminer.dynamicoreveins.helper.ExtractHeightConditions;
 import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 
 @Mod.EventBusSubscriber(modid = DynamicOreVeins.MOD_ID)
@@ -34,5 +35,9 @@ public class ServerLifecycleEvent {
         DensityFunctionThreshold.clearCache();
         OreVeinRegistryHolder.getConfigRegistry().forEach(VeinSettingsConfig::clearCache);
         System.out.println("[DOV] Cleared density function caches.");
+
+        // Clears all cached HeightRangeCondition lists on world close.
+        ExtractHeightConditions.clearCache();
+        System.out.println("[DOV] Cleared HeightRangeCondition lists cache.");
     }
 }

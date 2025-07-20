@@ -7,8 +7,6 @@ import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 
 import java.util.List;
 
-import static net.thebrewingminer.dynamicoreveins.helper.ExtractHeightConditions.extractHeightConditions;
-
 public class FindMatchingHeightRange {
     // Helps take all height range conditions of the selected config and builds a min and max Y for vein computation given the
     // context's y position.
@@ -16,7 +14,7 @@ public class FindMatchingHeightRange {
 
     @SuppressWarnings("ReplaceNullCheck")
     public static HeightRangeWrapper findMatchingHeightRange(OreVeinConfig selectedConfig, IVeinCondition.Context veinContext) {
-        List<HeightRangeCondition> conditionsList = extractHeightConditions(selectedConfig.conditions(), veinContext);   // Prepare a height range list.
+        List<HeightRangeCondition> conditionsList = ExtractHeightConditions.getOrCacheList(selectedConfig, veinContext);   // Prepare a height range list.
 
         WorldGenerationContext worldGenContext = new WorldGenerationContext(veinContext.chunkGenerator(), veinContext.heightAccessor());
         HeightRangeWrapper firstMatchingRange = null;
