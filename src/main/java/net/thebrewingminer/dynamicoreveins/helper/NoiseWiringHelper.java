@@ -30,6 +30,7 @@ public class NoiseWiringHelper implements DensityFunction.Visitor{
     }
 
     // Deprecated constructor.
+    @SuppressWarnings("unused")
     public NoiseWiringHelper(long seed, boolean useLegacyRandomSource, RandomState randomState, PositionalRandomFactory randomFactory){
         this.seed = seed;
         this.useLegacyRandomSource = useLegacyRandomSource;
@@ -41,6 +42,7 @@ public class NoiseWiringHelper implements DensityFunction.Visitor{
         return new LegacyRandomSource(seed + noiseSeed);
     }
 
+    @SuppressWarnings({"NullableProblems", "deprecation", "RedundantArrayCreation"})
     public DensityFunction.NoiseHolder visitNoise(DensityFunction.NoiseHolder noiseHolder){
         Holder<NormalNoise.NoiseParameters> data = noiseHolder.noiseData();
         NormalNoise noise;
@@ -73,6 +75,7 @@ public class NoiseWiringHelper implements DensityFunction.Visitor{
         } else return (function instanceof DensityFunctions.EndIslandDensityFunction ? new DensityFunctions.EndIslandDensityFunction(this.seed) : function);
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public DensityFunction apply(DensityFunction function) {
         return this.wrapped.computeIfAbsent(function, this::wrapNew);
