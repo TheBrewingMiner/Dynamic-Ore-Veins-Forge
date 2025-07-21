@@ -1,7 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#minecraft:gold_ores",
-    "minecraft:raw_gold_ore"
-  ]
-}

@@ -4,7 +4,7 @@
   "shuffle_source": "dynamic_veins:shuffle_source",
   "debug": {
     "height_range": false,
-    "shuffled_list": true,
+    "shuffled_list": false,
     "vein_success": false
   }
 }
