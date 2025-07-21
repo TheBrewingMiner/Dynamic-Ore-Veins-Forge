@@ -29,7 +29,7 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'atmospheric_nether'
+            property 'forge.enabledGameTestNamespaces', 'dynamic_ore_veins'
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -38,16 +38,16 @@ minecraft {
         }
 
         client {
-            property 'forge.enabledGameTestNamespaces', 'atmospheric_nether'
+            property 'forge.enabledGameTestNamespaces', 'dynamic_ore_veins'
         }
 
         server {
-            property 'forge.enabledGameTestNamespaces', 'atmospheric_nether'
+            property 'forge.enabledGameTestNamespaces', 'dynamic_ore_veins'
             args '--nogui'
         }
 
         gameTestServer {
-            property 'forge.enabledGameTestNamespaces', 'atmospheric_nether'
+            property 'forge.enabledGameTestNamespaces', 'dynamic_ore_veins'
         }
 
         data {
