@@ -36,13 +36,13 @@ public class VeinConditionRegistry {
                     T typeElement = map.get(typeKey);
 
                     if (typeElement == null) {
-                        return DataResult.error("Missing 'type' field in vein condition");
+                        return DataResult.error(() -> "Missing 'type' field in vein condition");
                     }
 
                     return ops.getStringValue(typeElement).flatMap(typeName -> {
                         Codec<? extends IVeinCondition> conditionCodec = VeinConditionRegistry.REGISTRY.get(typeName);
                         if (conditionCodec == null) {
-                            return DataResult.error("Unknown vein condition type: " + typeName);
+                            return DataResult.error(() -> "Unknown vein condition type: " + typeName);
                         }
 
                         return conditionCodec.decode(ops, input).map(pair -> Pair.of(pair.getFirst(), pair.getSecond()));
@@ -57,7 +57,7 @@ public class VeinConditionRegistry {
                 @SuppressWarnings("unchecked")
                 Codec<IVeinCondition> codec = (Codec<IVeinCondition>) VeinConditionRegistry.REGISTRY.get(typeName);
                 if (codec == null) {
-                    return DataResult.error("Unknown vein condition type for encoding: " + typeName);
+                    return DataResult.error(() -> "Unknown vein condition type for encoding: " + typeName);
                 }
 
                 return codec.encode(input, ops, prefix);
