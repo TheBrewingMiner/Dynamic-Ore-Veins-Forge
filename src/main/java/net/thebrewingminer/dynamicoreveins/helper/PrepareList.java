@@ -84,7 +84,7 @@ public final class PrepareList {
                 List<ResourceLocation> currentList = veinList.stream()
                         .map(vein -> {
                             ResourceLocation key = veinRegistry.getKey(vein);
-                            return key != null ? key : new ResourceLocation("unregistered");
+                            return key != null ? key : ResourceLocation.tryParse("unregistered");
                         })
                         .toList();
 
