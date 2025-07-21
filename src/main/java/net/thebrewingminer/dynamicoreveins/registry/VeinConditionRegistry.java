@@ -74,7 +74,7 @@ public class VeinConditionRegistry {
                     condition -> condition,
                     list -> {
                         if (list.size() == 1) {
-                            return list.get(0);
+                            return list.getFirst();
                         } else {
                             return new AllConditions(list);
                         }
