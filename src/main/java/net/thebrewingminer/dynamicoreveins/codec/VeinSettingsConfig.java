@@ -14,20 +14,23 @@ public class VeinSettingsConfig{
     protected boolean vanillaVeinsEnabled;
     protected boolean vanillaVeinsPrioritized;
     protected DensityFunction shuffleSource;
+    protected DebugSettings debugSettings;
 
     private final ConcurrentHashMap<ResourceKey<Level>, DensityFunction> mappedDensityFunctions = new ConcurrentHashMap<>();    // Caches the mapped functions per dimension.
 
     // Encodes simple boolean flags and a required density function.
     public static final Codec<VeinSettingsConfig> CODEC = RecordCodecBuilder.create(configInstance -> configInstance.group(
-            Codec.BOOL.fieldOf("vanilla_veins_enabled").orElse(true).forGetter(config -> config.vanillaVeinsEnabled),
-            Codec.BOOL.fieldOf("vanilla_priority").orElse(true).forGetter(config -> config.vanillaVeinsPrioritized),
-            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shuffle_source").forGetter(config -> config.shuffleSource)
+            Codec.BOOL.optionalFieldOf("vanilla_veins_enabled", true).forGetter(config -> config.vanillaVeinsEnabled),
+            Codec.BOOL.optionalFieldOf("vanilla_priority", true).forGetter(config -> config.vanillaVeinsPrioritized),
+            DensityFunction.HOLDER_HELPER_CODEC.fieldOf("shuffle_source").forGetter(config -> config.shuffleSource),
+            DebugSettings.CODEC.optionalFieldOf("debug", DebugSettings.createDefault()).forGetter(config -> config.debugSettings)
     ).apply(configInstance, VeinSettingsConfig::new));
 
-    public VeinSettingsConfig(boolean vanillaVeinsEnabled, boolean vanillaVeinsPrioritized, DensityFunction shuffleSource){
+    public VeinSettingsConfig(boolean vanillaVeinsEnabled, boolean vanillaVeinsPrioritized, DensityFunction shuffleSource, DebugSettings debugSettings){
         this.vanillaVeinsEnabled = vanillaVeinsEnabled;
         this.vanillaVeinsPrioritized = vanillaVeinsPrioritized;
         this.shuffleSource = shuffleSource;
+        this.debugSettings = debugSettings;
     }
 
     // Getters.
@@ -41,6 +44,10 @@ public class VeinSettingsConfig{
 
     public DensityFunction shuffleSource(){
         return this.shuffleSource;
+    }
+
+    public DebugSettings debugSettings() {
+        return this.debugSettings;
     }
 
     // Getter for the mapped density function.

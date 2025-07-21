@@ -3,6 +3,7 @@ package net.thebrewingminer.dynamicoreveins.helper;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.thebrewingminer.dynamicoreveins.codec.DebugSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.VeinSettingsConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
@@ -15,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public final class PrepareList {
+    public static DebugSettings debugSettings = OreVeinRegistryHolder.getActiveDebugSettings();
     private static final Map<Double, List<OreVeinConfig>> cachedLists = new ConcurrentHashMap<>();
     private static double cachedShuffleSourceSeed = Double.NEGATIVE_INFINITY;     // Debug
 
@@ -76,25 +78,26 @@ public final class PrepareList {
         // Lazily compute the shuffled list and cache the result for the "region."
         List<OreVeinConfig> veinList = cachedLists.computeIfAbsent(shuffleSourceSeed, shuffledList -> prepareList(shuffleSourceSeed, veinContext.seed(), settings.vanillaVeinsEnabled(), settings.vanillaVeinsPrioritized()));
 
-        // Debug
-        Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getVeinRegistry();
-        List<ResourceLocation> currentList = veinList.stream()
-                .map(vein -> {
-                    ResourceLocation key = veinRegistry.getKey(vein);
-                    return key != null ? key : new ResourceLocation("unregistered");
-                })
-                .toList();
+        if(debugSettings.printShuffledList()){
+            if (!(cachedShuffleSourceSeed == shuffleSourceSeed)) {
+                Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getVeinRegistry();
+                List<ResourceLocation> currentList = veinList.stream()
+                        .map(vein -> {
+                            ResourceLocation key = veinRegistry.getKey(vein);
+                            return key != null ? key : new ResourceLocation("unregistered");
+                        })
+                        .toList();
 
-        if (!(cachedShuffleSourceSeed == shuffleSourceSeed)) {
-            System.out.println("===================================================");
-            System.out.println("[DOV] Shuffle Source value: " + shuffleSourceSeed);
-            System.out.println("[DOV] World Seed: " + veinContext.seed());
-            System.out.println("[DOV] Final shuffled vein list: " + currentList.stream().map(ResourceLocation::toString).collect(Collectors.joining(", ")));
-            System.out.println("[DOV] VanillaVeinsEnabled:  " + settings.vanillaVeinsEnabled());
-            System.out.println("[DOV] VanillaVeinsPriority: " + settings.vanillaVeinsPrioritized());
-            System.out.println("===================================================");
+                System.out.println("===================================================");
+                System.out.println("[DOV] Shuffle Source value: " + shuffleSourceSeed);
+                System.out.println("[DOV] World Seed: " + veinContext.seed());
+                System.out.println("[DOV] Final shuffled vein list: " + currentList.stream().map(ResourceLocation::toString).collect(Collectors.joining(", ")));
+                System.out.println("[DOV] VanillaVeinsEnabled:  " + settings.vanillaVeinsEnabled());
+                System.out.println("[DOV] VanillaVeinsPriority: " + settings.vanillaVeinsPrioritized());
+                System.out.println("===================================================");
 
-            cachedShuffleSourceSeed = shuffleSourceSeed;
+                cachedShuffleSourceSeed = shuffleSourceSeed;
+            }
         }
 
         return veinList;

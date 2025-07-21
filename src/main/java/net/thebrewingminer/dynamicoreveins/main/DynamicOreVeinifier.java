@@ -4,10 +4,12 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.thebrewingminer.dynamicoreveins.codec.DebugSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreRichnessSettings;
 import net.thebrewingminer.dynamicoreveins.codec.OreVeinConfig;
 import net.thebrewingminer.dynamicoreveins.codec.condition.IVeinCondition;
 import net.thebrewingminer.dynamicoreveins.helper.HeightRangeWrapper;
+import net.thebrewingminer.dynamicoreveins.registry.OreVeinRegistryHolder;
 
 import java.util.List;
 
@@ -15,6 +17,7 @@ import static net.thebrewingminer.dynamicoreveins.helper.FindMatchingHeightRange
 import static net.thebrewingminer.dynamicoreveins.helper.InThresholdHelper.inThreshold;
 
 public final class DynamicOreVeinifier {
+    public static DebugSettings debugSettings = OreVeinRegistryHolder.getActiveDebugSettings();
     private DynamicOreVeinifier(){}
 
     public static BlockState selectVein(DensityFunction.FunctionContext functionContext, DensityFunction routerVeinToggle, DensityFunction routerVeinRidged, DensityFunction routerVeinGap, List<OreVeinConfig> veinList, IVeinCondition.Context veinContext){
@@ -53,7 +56,8 @@ public final class DynamicOreVeinifier {
         if (selectedConfig == null) return null;                                                // If no config was found, return null.
 
         HeightRangeWrapper heightRange = findMatchingHeightRange(selectedConfig, veinContext);  // Build a height range for the selected vein.
-//        System.out.println(heightRange);
+
+        if (debugSettings.printHeightRange()) System.out.println(heightRange);  // Debug.
 
         return dynamicOreVeinifier(functionContext, veinToggle, veinRidged, veinGap, selectedConfig, veinContext, heightRange);
     }
@@ -89,10 +93,10 @@ public final class DynamicOreVeinifier {
                 } else {
                     double richness = Mth.clampedMap(toggleStrength, settings.minRichnessThreshold(), settings.maxRichnessThreshold(), settings.minRichness(), settings.maxRichness());
                     if(((double)seededRandom.nextFloat() < richness) && (veinGap.compute(functionContext) > settings.skipOreThreshold())){
-//                        System.out.println("Success! " + veinContext.pos().toString());       // Debug
+                        if (debugSettings.printSuccessPos()) System.out.println("Success! " + veinContext.pos().toString());       // Debug
                         return (seededRandom.nextFloat() < secondaryOreChance ? secondaryOre : ore);
                     } else {
-//                        System.out.println("Success! " + veinContext.pos().toString());       // Debug
+                        if (debugSettings.printSuccessPos()) System.out.println("Success! " + veinContext.pos().toString());      // Debug
                         return fillerBlock;
                     }
                 }
