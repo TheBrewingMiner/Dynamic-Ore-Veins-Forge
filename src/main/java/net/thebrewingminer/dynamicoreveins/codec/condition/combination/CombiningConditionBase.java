@@ -30,7 +30,7 @@ public abstract class CombiningConditionBase implements IVeinCondition {
             either -> either.map(List::of, Function.identity()),
             list -> {
                 if(list.size() == 1){
-                    return Either.left(list.get(0));
+                    return Either.left(list.getFirst());
                 } else {
                     return Either.right(list);
                 }
