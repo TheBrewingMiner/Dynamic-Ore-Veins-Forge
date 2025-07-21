@@ -69,9 +69,6 @@ dependencies {
 mixin {
     add sourceSets.main, 'dynamic_ore_veins.refmap.json'
     config 'dynamic_ore_veins.mixins.json'
-
-    debug.verbose = true
-    debug.export = true
 }
 
 tasks.named('processResources', ProcessResources).configure {
