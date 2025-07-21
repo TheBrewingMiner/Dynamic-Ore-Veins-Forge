@@ -4,6 +4,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.world.RandomSequences;
+import net.minecraft.world.level.CustomSpawner;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelStorageSource;
@@ -22,7 +25,7 @@ import java.util.concurrent.Executor;
 public class ServerLevelMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void onConstruct(MinecraftServer pServer, Executor pDispatcher, LevelStorageSource.LevelStorageAccess pLevelStorageAccess, ServerLevelData pServerLevelData, ResourceKey pDimensionKey, LevelStem pLevelStem, ChunkProgressListener pProgressListener, boolean pIsDebug, long pSeed, List pCustomSpawners, boolean pTickTime, CallbackInfo ci) {
+    private void onConstruct(MinecraftServer pServer, Executor pDispatcher, LevelStorageSource.LevelStorageAccess pLevelStorageAccess, ServerLevelData pServerLevelData, ResourceKey<Level> pDimensionKey, LevelStem pLevelStem, ChunkProgressListener pProgressListener, boolean pIsDebug, long pSeed, List<CustomSpawner> pCustomSpawners, boolean pTickTime, RandomSequences randomSequences, CallbackInfo ci) {
         // Grab information of the dimension for each level on the Server.
         ChunkGenerator chunkGenerator = pLevelStem.generator();             // LevelStem provides the chunk generator.
         ((IDimensionAware)chunkGenerator).setDimension(pDimensionKey);      // Pass the provided dimension key into the chunk generator via IDimensionAware.
