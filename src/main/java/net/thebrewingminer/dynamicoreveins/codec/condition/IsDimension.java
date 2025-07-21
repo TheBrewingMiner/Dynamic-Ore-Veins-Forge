@@ -21,7 +21,7 @@ public class IsDimension {
             ),
             list -> {
                 if(list.size() == 1) {
-                    return Either.left(list.get(0));
+                    return Either.left(list.getFirst());
                 } else {
                     return Either.right(list);
                 }
