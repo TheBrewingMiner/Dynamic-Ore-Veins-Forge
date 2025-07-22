@@ -40,7 +40,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
     }
 
     // Reads objects with an input function, and optionally min and max thresholds. If no function is specified, the function will be assigned null.
-    // However, this leads to NPEs when accessed unless explicitly guarded from.
+    // However, this leads to NPEs when accessed unless explicitly guarded against.
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
         DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("input").forGetter(config -> Optional.ofNullable(config.function)),
         Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.NEGATIVE_INFINITY).forGetter(config -> config.minThreshold),
