@@ -20,7 +20,7 @@ public class ResourceKeyOrBlockState {
     ).xmap(
         either -> either.map(
                 location -> BlockStateProvider.simple(
-                        BuiltInRegistries.BLOCK.getOrThrow(ResourceKey.create(Registries.BLOCK, location)).defaultBlockState()
+                        BuiltInRegistries.BLOCK.getOrThrow(ResourceKey.create(Registries.BLOCK, location)).value().defaultBlockState()
                 ),
                 provider -> provider
         ),

@@ -24,7 +24,7 @@ public class OreVeinRegistryHolder {
         if (access == null) {
             throw new IllegalStateException("RegistryAccess has not been initialized.");
         }
-        return access.registryOrThrow(VEIN_REGISTRY);
+        return access.lookupOrThrow(VEIN_REGISTRY);
     }
 
     public static Registry<VeinSettingsConfig> getConfigRegistry(){
@@ -32,7 +32,7 @@ public class OreVeinRegistryHolder {
         if (access == null) {
             throw new IllegalStateException("RegistryAccess has not been initialized.");
         }
-        return access.registryOrThrow(CONFIG_REGISTRY);
+        return access.lookupOrThrow(CONFIG_REGISTRY);
     }
 
     public static VeinSettingsConfig getActiveConfig(){
