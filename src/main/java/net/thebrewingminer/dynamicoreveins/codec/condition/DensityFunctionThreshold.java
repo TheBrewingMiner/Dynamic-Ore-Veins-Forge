@@ -11,6 +11,7 @@ import net.thebrewingminer.dynamicoreveins.helper.NoiseWiringHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -34,14 +35,19 @@ public class DensityFunctionThreshold implements IVeinCondition{
         INSTANCES.add(this);                // Track this new object in the list.
     }
 
-    // Encodes objects with an input function, and optionally min and max thresholds.
+    protected static DensityFunctionThreshold fromCodec(Optional<DensityFunction> function, double minThreshold, double maxThreshold) {
+        return new DensityFunctionThreshold(function.orElse(null), minThreshold, maxThreshold);
+    }
+
+    // Reads objects with an input function, and optionally min and max thresholds. If no function is specified, the function will be assigned null.
+    // However, this leads to NPEs when accessed unless explicitly guarded from.
     public static final Codec<DensityFunctionThreshold> DENSITY_FUNCTION_THRESHOLD_CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        DensityFunction.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(config -> config.function),
+        DensityFunction.HOLDER_HELPER_CODEC.optionalFieldOf("input").forGetter(config -> Optional.ofNullable(config.function)),
         Codec.DOUBLE.fieldOf("min_threshold").orElse(Double.NEGATIVE_INFINITY).forGetter(config -> config.minThreshold),
         Codec.DOUBLE.fieldOf("max_threshold").orElse(Double.POSITIVE_INFINITY).forGetter(config -> config.maxThreshold)
-    ).apply(instance, DensityFunctionThreshold::new));
+    ).apply(instance, DensityFunctionThreshold::fromCodec));
 
-    // Encodes a direct density function object or reference, or the object described above.
+    // Reads a direct density function object or reference, or the object described above.
     // If a direct density function, encode with default threshold [-1.0, 1.0].
     public static final Codec<DensityFunctionThreshold> CODEC = Codec.either(
         DensityFunction.HOLDER_HELPER_CODEC,
@@ -80,7 +86,7 @@ public class DensityFunctionThreshold implements IVeinCondition{
 
     @Override
     public boolean test(Context context){
-        if (!(context.chunkGenerator() instanceof NoiseBasedChunkGenerator)) return false;  // Guard clause. Should be implicit but just to be sure.
+        if (!(context.chunkGenerator() instanceof NoiseBasedChunkGenerator)) return false;  // Guard clause. Chunk generator type should be implicit but just to be sure.
 
         if(this.function == null){
             throw new IllegalStateException("Density function in conditions should not be null.");  // Lazily check valid state, since this condition is
