@@ -1,6 +1,6 @@
 package net.thebrewingminer.dynamicoreveins.event;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DataPackRegistryEvent;
 import net.thebrewingminer.dynamicoreveins.DynamicOreVeins;
