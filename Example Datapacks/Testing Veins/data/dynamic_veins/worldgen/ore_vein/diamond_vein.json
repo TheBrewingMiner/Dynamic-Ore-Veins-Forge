@@ -5,13 +5,13 @@
             {
                 "weight": 1,
                 "data": {
-                    "Name": "minecraft:gold_ore"
+                    "Name": "minecraft:diamond_ore"
                 }
             },
             {
                 "weight": 3,
                 "data": {
-                    "Name": "minecraft:deepslate_gold_ore"
+                    "Name": "minecraft:deepslate_diamond_ore"
                 }
             }
         ]
@@ -66,6 +66,7 @@
             }
         }
     },
+    "vein_gap": {},
     "vein_settings": {
         "min_richness_threshold": -1.0,
         "vein_solidness": 1.0
@@ -73,35 +74,11 @@
     "conditions": [
         {
             "type": "dynamic_veins:any_of",
-            "conditions": [
-                {
-                    "type": "dynamic_veins:height_range",
-                    "min_inclusive": {
-                        "absolute": 72
-                    },
-                    "max_inclusive": {
-                        "absolute": 78
-                    }
-                },
-                {
-                    "type": "dynamic_veins:height_range",
-                    "min_inclusive": {
-                        "absolute": 83
-                    },
-                    "max_inclusive": {
-                        "absolute": 85
-                    }
-                },
-                {
-                    "type": "dynamic_veins:height_range",
-                    "min_inclusive": {
-                        "absolute": 90
-                    },
-                    "max_inclusive": {
-                        "absolute": 95
-                    }
-                }
-            ]
+            "conditions": {
+                "type": "dynamic_veins:density_threshold",
+                "input": "minecraft:overworld/ridges_folded",
+                "min_threshold": 0.0
+            }
         }
     ]
 }
