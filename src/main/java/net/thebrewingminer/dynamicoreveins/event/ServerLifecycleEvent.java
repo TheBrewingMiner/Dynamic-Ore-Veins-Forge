@@ -20,14 +20,21 @@ public class ServerLifecycleEvent {
     public static void onServerStarted(ServerAboutToStartEvent event) {
         // Initializes holder by storing the registry access object.
         // Registries are retrieved using this access.
-        if (!OreVeinRegistryHolder.isInitialized()) {
-            RegistryAccess registryAccess = event.getServer().registryAccess();
-            OreVeinRegistryHolder.init(registryAccess);
-            System.out.println("[DOV] Registry initialized on server start.");
+        RegistryAccess registryAccess = event.getServer().registryAccess();
+        OreVeinRegistryHolder.init(registryAccess);
+        System.out.println("[DOV] Registry initialized on server start.");
 
-            // Verifies how many configs are loaded in the registry.
-            Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getVeinRegistry();
-            System.out.println("[DOV] Ore Vein Registry size: " + veinRegistry.size());
+        // Verifies how many configs are loaded in the registry.
+        Registry<OreVeinConfig> veinRegistry = OreVeinRegistryHolder.getVeinRegistry();
+        System.out.println("[DOV] Ore Vein Registry size: " + veinRegistry.size());
+
+        Registry<VeinSettingsConfig> configRegistry = OreVeinRegistryHolder.getConfigRegistry();
+        if ((configRegistry.size() == 1)) {
+            System.out.println("[DOV] 1 config loaded!");
+        } else if (configRegistry.size() == 0){
+            throw new IllegalStateException("Missing vein settings file in ~config/vein_settings/*! Where'd it go?");
+        } else {
+            System.err.println("[DOV] More than one config loaded. Are you sure?");
         }
     }
 
