@@ -43,17 +43,17 @@ public abstract class CreateVein {
             ResourceKey<Level> currDimension = wgContext.getDimension();
 
 //          If missing required info, log once and return null
-            if (currDimension == null || chunkGenerator == null || heightAccessor == null) {
-                System.err.println("-------------------------------------------------------------------------------------------------------");
-                System.err.println("[DOV] Warning: Worldgen context missing during BlockStateFiller evaluation. Skipping vein placement.");
-                System.err.println("  -> NoiseChunk = " + noiseChunk);
-                System.err.println("  -> generator = " + chunkGenerator);
-                System.err.println("  -> dimensionKey = " + currDimension);
-                System.err.println("  -> heightAccessor = " + heightAccessor);
-                System.err.println("  -> Pos = " + new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ()));
-                System.err.println("-------------------------------------------------------------------------------------------------------");
-                return null;
-            }
+//            if (currDimension == null || chunkGenerator == null || heightAccessor == null) {
+//                System.err.println("-------------------------------------------------------------------------------------------------------");
+//                System.err.println("[DOV] Warning: Worldgen context missing during BlockStateFiller evaluation. Skipping vein placement.");
+//                System.err.println("  -> NoiseChunk = " + noiseChunk);
+//                System.err.println("  -> generator = " + chunkGenerator);
+//                System.err.println("  -> dimensionKey = " + currDimension);
+//                System.err.println("  -> heightAccessor = " + heightAccessor);
+//                System.err.println("  -> Pos = " + new BlockPos(functionContext.blockX(), functionContext.blockY(), functionContext.blockZ()));
+//                System.err.println("-------------------------------------------------------------------------------------------------------");
+//                return null;
+//            }
 
             // Grab the rest of the information from the noise settings.
             boolean useLegacyRandomSource = noiseGeneratorSettings.useLegacyRandomSource();
