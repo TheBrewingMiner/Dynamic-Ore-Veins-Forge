@@ -28,5 +28,5 @@ via JSON, with some extra features!
 >>OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 >>SOFTWARE.
 
-Documentation and explanations for all mod loaders can be found here: 
-https://github.com/TheBrewingMiner/Dynamic-Ore-Veins-Forge/wiki
+Documentation (for all mod loaders) can be found here: 
+[Wiki](https://github.com/TheBrewingMiner/DOV-Homepage/wiki)
